@@ -10,6 +10,8 @@ import ChannelGauge from "@/components/ChannelGauge";
 import ActionStrip, { type ContentLink } from "@/components/ActionStrip";
 import BootSequence from "@/components/BootSequence";
 import AmberGlitter from "@/components/AmberGlitter";
+import SectionModeDial from "@/components/SectionModeDial";
+import PerspectiveChassis, { RecessedWell } from "@/components/PerspectiveChassis";
 
 /** Consistent spacing rhythm (px) */
 const S = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32 } as const;
@@ -41,10 +43,10 @@ function useBreakpoint() {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { id: "projects",   label: "PROJECTS",   shortLabel: "PRJ", icon: FolderGit2 },
-  { id: "experience", label: "EXPERIENCE", shortLabel: "EXP", icon: Cpu },
-  { id: "skills",     label: "SKILLS",     shortLabel: "SKL", icon: Terminal },
-  { id: "education",  label: "EDUCATION",  shortLabel: "EDU", icon: GraduationCap },
+  { id: "projects",   label: "PROJECTS",   shortLabel: "PRJ", icon: FolderGit2,    detail: "Shipped platforms, APIs, and production builds" },
+  { id: "experience", label: "EXPERIENCE", shortLabel: "EXP", icon: Cpu,           detail: "Roles, impact, and systems owned" },
+  { id: "skills",     label: "SKILLS",     shortLabel: "SKL", icon: Terminal,      detail: "Stack, cloud, and engineering craft" },
+  { id: "education",  label: "EDUCATION",  shortLabel: "EDU", icon: GraduationCap, detail: "Degrees, coursework, and foundations" },
 ];
 
 type ContentEntry = {
@@ -476,125 +478,30 @@ function ChannelTuner({
   );
 }
 
-// ─── Hardware Section Button ──────────────────────────────────────────────────
+// ─── Section mode dial (replaces bottom keycaps) ──────────────────────────────
 
-function HardwareButton({
-  label,
-  shortLabel,
-  icon: Icon,
-  active,
-  onClick,
+function SectionSelect({
+  category,
+  channelIndex,
+  channelTotal,
+  onCategoryChange,
   compact = false,
 }: {
-  label: string;
-  shortLabel: string;
-  icon: ElementType;
-  active: boolean;
-  onClick: () => void;
+  category: string;
+  channelIndex: number;
+  channelTotal: number;
+  onCategoryChange: (id: string) => void;
   compact?: boolean;
 }) {
   return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={{ y: 3, scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 600, damping: 28 }}
-      className="console-focus"
-      style={{
-        border: "none",
-        background: "none",
-        padding: 0,
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 8,
-        flex: 1,
-        minWidth: 0,
-      }}
-    >
-      <motion.div
-        animate={{
-          background: active ? "#F59E0B" : "#1C1F27",
-          boxShadow: active
-            ? "0 0 12px #F59E0B, 0 0 24px #F59E0B55"
-            : "inset 0 1px 2px #00000088",
-        }}
-        transition={{ duration: 0.2 }}
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          flexShrink: 0,
-          border: "1px solid #272A34",
-        }}
-      />
-      <div
-        style={{
-          width: "100%",
-          minHeight: compact ? 58 : 72,
-          background: active
-            ? "linear-gradient(165deg, #2A2F3A 0%, #1A1D24 48%, #12141A 100%)"
-            : "linear-gradient(165deg, #1C1F27 0%, #14161C 48%, #0E1015 100%)",
-          border: `1px solid ${active ? "#F59E0B66" : "#272A34"}`,
-          boxShadow: active
-            ? "inset 0 1px 0 #ffffff14, inset 0 -2px 8px #00000088, 0 1px 0 #040506, 0 0 20px #F59E0B18"
-            : "inset 0 1px 0 #ffffff0c, 0 4px 0 #050607, 0 5px 0 #0A0B0E, 0 8px 16px #00000055",
-          borderRadius: 10,
-          padding: compact ? "12px 8px" : "14px 12px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 8,
-          boxSizing: "border-box",
-          position: "relative",
-          transform: active ? "translateY(2px)" : "translateY(0)",
-          transition: "transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 1,
-            borderRadius: 9,
-            background:
-              "linear-gradient(145deg, #ffffff0d 0%, transparent 42%, transparent 100%)",
-            pointerEvents: "none",
-          }}
-        />
-        <Icon
-          size={compact ? 18 : 22}
-          style={{
-            color: active ? "#F59E0B" : "#5A6070",
-            transition: "color 0.2s",
-            flexShrink: 0,
-            position: "relative",
-            zIndex: 1,
-          }}
-        />
-        <span
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            fontSize: compact ? 11 : 13,
-            fontWeight: 600,
-            letterSpacing: "0.08em",
-            color: active ? "#F59E0B" : "#6A7080",
-            textAlign: "center",
-            transition: "color 0.2s",
-            lineHeight: 1.2,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "100%",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          {compact ? shortLabel : label}
-        </span>
-      </div>
-    </motion.button>
+    <SectionModeDial
+      sections={CATEGORIES}
+      activeId={category}
+      channelIndex={channelIndex}
+      channelTotal={channelTotal}
+      onChange={onCategoryChange}
+      compact={compact}
+    />
   );
 }
 
@@ -698,7 +605,7 @@ function MainScreen({ category, channelIndex, flickering, fontSize, reducedMotio
     }}>
       <div className="scanline-overlay" style={{ zIndex: 6 }} />
       <NoiseLayer opacity={0.05} />
-      {!reducedMotion && <AmberGlitter density={14} />}
+      {!reducedMotion && <AmberGlitter density={14} showSheen />}
       <div style={{ borderBottom: "1px solid #1C1F27", padding: `${S.sm}px ${S.lg}px`, background: "#08090E", flexShrink: 0, display: "flex", alignItems: "center", gap: S.sm, position: "relative", zIndex: 9 }}>
         <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 8px #F59E0B", animation: reducedMotion ? undefined : "pulse-amber 2s ease-in-out infinite" }} />
         <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F59E0B", letterSpacing: "0.2em" }}>TELEMETRY FEED</span>
@@ -773,57 +680,28 @@ function MainScreen({ category, channelIndex, flickering, fontSize, reducedMotio
   );
 }
 
-// ─── Shared bottom button bar ─────────────────────────────────────────────────
-
-function SectionButtons({ category, onCategoryChange, compact = false }: { category: string; onCategoryChange: (id: string) => void; compact?: boolean }) {
-  return (
-    <div
-      style={{
-        width: "100%",
-        padding: compact ? 8 : 12,
-        borderRadius: 14,
-        background: "linear-gradient(180deg, #0C0E13 0%, #08090E 100%)",
-        border: "1px solid #1C1F27",
-        boxShadow: "inset 0 2px 10px #00000099, inset 0 1px 0 #ffffff08, 0 1px 0 #12141A",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: compact ? 10 : 14,
-          width: "100%",
-        }}
-      >
-        {CATEGORIES.map(cat => (
-          <HardwareButton
-            key={cat.id}
-            label={cat.label}
-            shortLabel={cat.shortLabel}
-            icon={cat.icon}
-            active={category === cat.id}
-            onClick={() => onCategoryChange(cat.id)}
-            compact={compact}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 // ─── Desktop Layout ───────────────────────────────────────────────────────────
 
 function DesktopLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion }: LayoutProps) {
   const FASTENERS = [-15, 30, 45, 90];
-  const FASTENER_POS = [{ top: 12, left: 14 }, { top: 12, right: 14 }, { bottom: 108, left: 14 }, { bottom: 108, right: 14 }];
+  const FASTENER_POS = [{ top: 12, left: 14 }, { top: 12, right: 14 }, { bottom: 132, left: 14 }, { bottom: 132, right: 14 }];
   return (
-    <div className={`relative flex flex-col ${reducedMotion ? "" : "chassis-breathe"}`} style={{
-      width: "min(1420px, 99vw)", height: "min(880px, 97vh)",
-      background: "#0A0B0E", borderRadius: 32,
-      border: "1.5px solid #1A1D24",
-      boxShadow: "0 0 80px #F59E0B0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844, inset 0 -1px 0 #00000088",
-      overflow: "hidden",
-    }}>
+    <PerspectiveChassis
+      reducedMotion={reducedMotion}
+      className={reducedMotion ? undefined : "chassis-breathe"}
+      style={{
+        width: "min(1420px, 96vw)",
+        height: "min(880px, 92vh)",
+        background: "#0A0B0E",
+        borderRadius: 32,
+        border: "1.5px solid #1A1D24",
+        boxShadow:
+          "0 0 80px #F59E0B0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844, inset 0 -1px 0 #00000088",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
       <CircuitTraces />
       {!reducedMotion && <AmberGlitter density={10} />}
@@ -832,31 +710,33 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
       ))}
       <StatusBar category={category} channelIndex={channelIndex} total={total} />
       <div className="flex flex-1" style={{ gap: S.lg, padding: S.xl, paddingBottom: S.sm, position: "relative", zIndex: 5, minHeight: 0 }}>
-        <div style={{ width: 248, flexShrink: 0 }}><ProfilePanel /></div>
-        <div className="flex-1 min-w-0">
+        <RecessedWell style={{ width: 248, flexShrink: 0 }}>
+          <ProfilePanel />
+        </RecessedWell>
+        <RecessedWell className="flex-1 min-w-0">
           <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={52} reducedMotion={reducedMotion} />
-        </div>
-        <div className="flex flex-col items-center justify-center" style={{
-          width: 236, flexShrink: 0, gap: S.lg,
-          background: "linear-gradient(180deg, #0C0E14 0%, #08090E 100%)",
-          border: "1px solid #1C1F27", borderRadius: 14, padding: S.lg, position: "relative",
-          boxShadow: "inset 0 2px 12px #000000aa, inset 0 1px 0 #ffffff08",
-        }}>
-          <NoiseLayer opacity={0.03} />
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#3A3F50", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
-          <div style={{ position: "relative", zIndex: 2 }}>
-            <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} />
+        </RecessedWell>
+        <RecessedWell style={{ width: 236, flexShrink: 0 }}>
+          <div className="flex flex-col items-center justify-center h-full" style={{
+            gap: S.lg,
+            background: "linear-gradient(180deg, #0C0E14 0%, #08090E 100%)",
+            padding: S.lg, position: "relative",
+          }}>
+            <NoiseLayer opacity={0.03} />
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#3A3F50", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
+            <div style={{ position: "relative", zIndex: 2 }}>
+              <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} />
+            </div>
+            <div style={{ position: "relative", zIndex: 2, textAlign: "center", fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#2A2D38", letterSpacing: "0.1em", lineHeight: 1.8 }}>
+              CLICK DIAL · GAUGE ‹ ›<br />← → · MODE DIAL BELOW
+            </div>
           </div>
-          <div style={{ position: "relative", zIndex: 2, textAlign: "center", fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#2A2D38", letterSpacing: "0.1em", lineHeight: 1.8 }}>
-            CLICK DIAL · GAUGE ‹ ›<br />← → · 1–4 SECTIONS
-          </div>
-        </div>
+        </RecessedWell>
       </div>
       <div style={{ padding: `${S.md}px ${S.xl}px ${S.lg}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.18em", color: "#2A2D38", marginBottom: S.sm }}>SECTION SELECT</div>
-        <SectionButtons category={category} onCategoryChange={handleCategoryChange} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} />
       </div>
-    </div>
+    </PerspectiveChassis>
   );
 }
 
@@ -888,7 +768,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
         </div>
       </div>
       <div style={{ padding: `${S.sm}px ${S.md}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
-        <SectionButtons category={category} onCategoryChange={handleCategoryChange} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} />
       </div>
     </div>
   );
@@ -952,7 +832,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       </div>
 
       <div style={{ padding: `${S.sm}px ${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
-        <SectionButtons category={category} onCategoryChange={handleCategoryChange} compact />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact />
       </div>
     </div>
   );

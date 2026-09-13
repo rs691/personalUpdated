@@ -1,5 +1,12 @@
 /** Sparse amber particulate glitter — contest polish without clutter. */
-export default function AmberGlitter({ density = 18 }: { density?: number }) {
+export default function AmberGlitter({
+  density = 18,
+  showSheen = false,
+}: {
+  density?: number;
+  /** CRT light sweep — only enable on the center telemetry screen */
+  showSheen?: boolean;
+}) {
   const dots = Array.from({ length: density }, (_, i) => {
     const left = ((i * 37) % 100) + (i % 3);
     const top = ((i * 53) % 100) + (i % 5);
@@ -39,7 +46,7 @@ export default function AmberGlitter({ density = 18 }: { density?: number }) {
           }}
         />
       ))}
-      <div className="crt-sheen" />
+      {showSheen && <div className="crt-sheen" />}
     </div>
   );
 }

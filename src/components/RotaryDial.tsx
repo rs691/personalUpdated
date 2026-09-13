@@ -1,5 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { animate, motion, useMotionValue } from "framer-motion";
+import { useCallback, useEffect, useState, type ElementType } from "react";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -18,24 +23,37 @@ function angleForIndex(index: number, total: number) {
   return (index / total) * 360;
 }
 
+export type DialMarker = {
+  id: string;
+  shortLabel: string;
+  icon: ElementType;
+};
+
 type RotaryDialProps = {
   channelIndex: number;
   total: number;
   onStep: (direction: 1 | -1) => void;
   onSelect: (index: number) => void;
   size?: number;
+  ariaLabel?: string;
+  /** Fixed rim labels (icon + abbrev). Do not rotate with the knob face. */
+  markers?: DialMarker[];
 };
 
-/** Click left / right to turn; ticks jump; knob springs smoothly. No drag. */
+/** Click left / right to turn; ticks jump; extruded knob with fixed-light specular. */
 export default function RotaryDial({
   channelIndex,
   total,
   onStep,
   onSelect,
   size = 128,
+  ariaLabel = "Channel dial",
+  markers,
 }: RotaryDialProps) {
   const reducedMotion = usePrefersReducedMotion();
   const rotation = useMotionValue(angleForIndex(channelIndex, total));
+  // Keep highlight lit from top-left while the knob turns
+  const specularRotate = useTransform(rotation, (r) => -r);
 
   useEffect(() => {
     const target = angleForIndex(channelIndex, total);
@@ -56,11 +74,17 @@ export default function RotaryDial({
     (e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
-      // Left half = previous, right half = next
       onStep(x < rect.width / 2 ? -1 : 1);
     },
     [onStep],
   );
+
+  const wall = Math.max(8, size * 0.07);
+  const hasMarkers = Boolean(markers && markers.length > 0);
+  const ringPad = hasMarkers ? Math.max(36, size * 0.34) : 0;
+  const outer = size + ringPad * 2;
+  const dialTop = ringPad;
+  const dialLeft = ringPad;
 
   const ticks = Array.from({ length: total }, (_, i) => {
     const a = angleForIndex(i, total);
@@ -69,7 +93,7 @@ export default function RotaryDial({
       <button
         key={i}
         type="button"
-        aria-label={`Channel ${i + 1}`}
+        aria-label={markers?.[i]?.shortLabel ?? `Position ${i + 1}`}
         onClick={(e) => {
           e.stopPropagation();
           onSelect(i);
@@ -84,12 +108,13 @@ export default function RotaryDial({
           padding: 0,
           cursor: "pointer",
           borderRadius: "50%",
+          zIndex: 4,
         }}
       >
         <span
           style={{
             position: "absolute",
-            top: 4,
+            top: 5,
             left: "50%",
             width: active ? 4 : 3,
             height: active ? 14 : 9,
@@ -104,117 +129,201 @@ export default function RotaryDial({
     );
   });
 
+  const rimMarks =
+    hasMarkers &&
+    markers!.map((m, i) => {
+      const a = angleForIndex(i, total);
+      const active = i === channelIndex;
+      const Icon = m.icon;
+      const rad = ((a - 90) * Math.PI) / 180;
+      const r = size / 2 + ringPad * 0.55;
+      const cx = outer / 2 + Math.cos(rad) * r;
+      const cy = outer / 2 + Math.sin(rad) * r;
+      return (
+        <button
+          key={m.id}
+          type="button"
+          aria-label={m.shortLabel}
+          aria-pressed={active}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(i);
+          }}
+          className="console-focus"
+          style={{
+            position: "absolute",
+            left: cx,
+            top: cy,
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            border: "none",
+            background: "transparent",
+            padding: 4,
+            cursor: "pointer",
+            zIndex: 6,
+            color: active ? "#F59E0B" : "#5A6070",
+            filter: active ? "drop-shadow(0 0 6px #F59E0B66)" : "none",
+          }}
+        >
+          <Icon size={size < 110 ? 12 : 14} strokeWidth={active ? 2.25 : 1.75} />
+          <span
+            style={{
+              fontFamily: "'Chakra Petch', sans-serif",
+              fontSize: size < 110 ? 8 : 9,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              lineHeight: 1,
+            }}
+          >
+            {m.shortLabel}
+          </span>
+        </button>
+      );
+    });
+
   return (
     <div
-      role="group"
-      aria-label="Channel dial"
-      tabIndex={0}
-      onClick={handleSurfaceClick}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-          e.preventDefault();
-          onStep(1);
-        } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-          e.preventDefault();
-          onStep(-1);
-        }
-      }}
-      className="console-focus"
       style={{
-        width: size,
-        height: size,
-        borderRadius: "50%",
         position: "relative",
-        cursor: "pointer",
-        background:
-          "radial-gradient(circle at 50% 45%, #1A1D24 0%, #0E1015 55%, #060709 100%)",
-        boxShadow:
-          "inset 0 2px 8px #000000cc, inset 0 -1px 0 #2A2D3844, 0 8px 0 #040506, 0 10px 24px #00000088",
-        border: "1px solid #272A34",
+        width: outer,
+        height: outer + wall,
+        flexShrink: 0,
       }}
     >
-      {ticks}
+      {rimMarks}
 
-      <div
-        style={{
-          position: "absolute",
-          inset: 14,
-          borderRadius: "50%",
-          pointerEvents: "none",
-          background:
-            "radial-gradient(circle at 35% 30%, #2A2F3A 0%, #151820 45%, #0A0C10 100%)",
-          boxShadow:
-            "inset 0 1px 0 #ffffff14, inset 0 -2px 6px #00000099, 0 0 0 1px #1C1F27",
-        }}
-      />
-
-      <motion.div
-        style={{
-          position: "absolute",
-          inset: 22,
-          borderRadius: "50%",
-          rotate: rotation,
-          pointerEvents: "none",
-          background:
-            "radial-gradient(circle at 32% 28%, #3A4050 0%, #1C1F27 40%, #0D0F14 78%, #08090C 100%)",
-          boxShadow:
-            "inset 0 2px 3px #ffffff18, inset 0 -4px 10px #000000aa, 0 2px 4px #00000066",
-          border: "1px solid #2A2D38",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 8,
-            left: "50%",
-            width: 4,
-            height: size * 0.18,
-            marginLeft: -2,
-            borderRadius: 2,
-            background:
-              "linear-gradient(180deg, #FCD34D 0%, #F59E0B 60%, #B45309 100%)",
-            boxShadow: "0 0 10px #F59E0B99, 0 0 2px #F59E0B",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: size * 0.22,
-            height: size * 0.22,
-            marginLeft: -(size * 0.11),
-            marginTop: -(size * 0.11),
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle at 35% 30%, #2A2D38 0%, #13151B 70%, #08090C 100%)",
-            boxShadow:
-              "inset 0 1px 0 #ffffff12, 0 0 0 1px #1C1F27, 0 2px 4px #00000088",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: "50%",
-            background:
-              "linear-gradient(135deg, #ffffff18 0%, transparent 38%, transparent 62%, #00000044 100%)",
-          }}
-        />
-      </motion.div>
-
-      {/* Hit-zone hints */}
+      {/* Cylinder side wall (extrusion) */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          inset: 0,
-          borderRadius: "50%",
-          pointerEvents: "none",
+          left: dialLeft + 2,
+          right: ringPad + 2,
+          top: dialTop + size * 0.55,
+          height: wall + size * 0.2,
+          borderRadius: "0 0 50% 50% / 0 0 40% 40%",
           background:
-            "linear-gradient(90deg, #F59E0B08 0%, transparent 42%, transparent 58%, #F59E0B08 100%)",
+            "linear-gradient(180deg, #1A1D24 0%, #0A0C10 55%, #050607 100%)",
+          boxShadow: "0 10px 18px #00000099",
+          zIndex: 0,
         }}
       />
+
+      <div
+        role="group"
+        aria-label={ariaLabel}
+        tabIndex={0}
+        onClick={handleSurfaceClick}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+            e.preventDefault();
+            onStep(1);
+          } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+            e.preventDefault();
+            onStep(-1);
+          }
+        }}
+        className="console-focus"
+        style={{
+          width: size,
+          height: size,
+          borderRadius: "50%",
+          position: "absolute",
+          left: dialLeft,
+          top: dialTop,
+          cursor: "pointer",
+          zIndex: 1,
+          background:
+            "radial-gradient(circle at 50% 42%, #22262F 0%, #12151C 48%, #07080B 100%)",
+          boxShadow: `
+            inset 0 2px 4px #ffffff14,
+            inset 0 -6px 14px #000000cc,
+            0 ${wall}px 0 #0A0B0E,
+            0 ${wall + 2}px 0 #050607,
+            0 ${wall + 6}px 20px #000000aa
+          `,
+          border: "1px solid #2A2D38",
+        }}
+      >
+        {ticks}
+
+        {/* Bezel lip */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 10,
+            borderRadius: "50%",
+            pointerEvents: "none",
+            background:
+              "radial-gradient(circle at 32% 28%, #3A4050 0%, #1A1D24 42%, #0C0E13 100%)",
+            boxShadow:
+              "inset 0 1px 0 #ffffff18, inset 0 -3px 8px #000000aa, 0 0 0 1px #1C1F27",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Rotating knob face */}
+        <motion.div
+          style={{
+            position: "absolute",
+            inset: 20,
+            borderRadius: "50%",
+            rotate: rotation,
+            pointerEvents: "none",
+            background:
+              "radial-gradient(circle at 30% 26%, #4A5060 0%, #232833 38%, #12151B 78%, #08090C 100%)",
+            boxShadow:
+              "inset 0 2px 3px #ffffff1a, inset 0 -5px 12px #000000bb, 0 2px 4px #00000066",
+            border: "1px solid #2A2D38",
+            zIndex: 2,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 7,
+              left: "50%",
+              width: 4,
+              height: size * 0.17,
+              marginLeft: -2,
+              borderRadius: 2,
+              background:
+                "linear-gradient(180deg, #FCD34D 0%, #F59E0B 55%, #B45309 100%)",
+              boxShadow: "0 0 10px #F59E0B99",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: size * 0.2,
+              height: size * 0.2,
+              marginLeft: -(size * 0.1),
+              marginTop: -(size * 0.1),
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle at 35% 30%, #2F3440 0%, #14161C 70%, #08090C 100%)",
+              boxShadow:
+                "inset 0 1px 0 #ffffff12, 0 0 0 1px #1C1F27, 0 2px 4px #00000088",
+            }}
+          />
+          {/* Counter-rotated specular so light stays fixed in space */}
+          <motion.div
+            style={{
+              position: "absolute",
+              inset: 0,
+              borderRadius: "50%",
+              rotate: specularRotate,
+              background:
+                "linear-gradient(135deg, #ffffff22 0%, transparent 34%, transparent 68%, #00000055 100%)",
+            }}
+          />
+        </motion.div>
+      </div>
     </div>
   );
 }
