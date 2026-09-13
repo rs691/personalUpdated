@@ -5,6 +5,15 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import {
+  KEYCAP_SIZE,
+  KEYCAP_SIZE_COMPACT,
+  keycapFace,
+  keycapFaceActive,
+  keycapHover,
+  keycapTap,
+  keycapTransition,
+} from "@/components/keycapStyles";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -81,19 +90,58 @@ export default function RotaryDial({
 
   const wall = Math.max(8, size * 0.07);
   const hasMarkers = Boolean(markers && markers.length > 0);
-  const ringPad = hasMarkers ? Math.max(36, size * 0.34) : 0;
+  // Extra pad so raised keycap marks clear the knob
+  const ringPad = hasMarkers ? Math.max(48, size * 0.42) : 0;
   const outer = size + ringPad * 2;
   const dialTop = ringPad;
   const dialLeft = ringPad;
+  const iconPx = size < 110 ? 14 : 16;
+  const keySize = size < 110 ? KEYCAP_SIZE_COMPACT : KEYCAP_SIZE;
 
+  // Ticks: clickable jump targets on tuner; decorative only when rim keycaps own selection
   const ticks = Array.from({ length: total }, (_, i) => {
     const a = angleForIndex(i, total);
     const active = i === channelIndex;
+    const tickMark = (
+      <span
+        style={{
+          position: "absolute",
+          top: 5,
+          left: "50%",
+          width: active ? 4 : 3,
+          height: active ? 14 : 9,
+          marginLeft: active ? -2 : -1.5,
+          borderRadius: 1,
+          background: active ? "#F5A00F" : "#525F7B",
+          boxShadow: active ? "0 0 8px #F5A00F88" : "none",
+          pointerEvents: "none",
+        }}
+      />
+    );
+
+    if (hasMarkers) {
+      return (
+        <div
+          key={i}
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            transform: `rotate(${a}deg)`,
+            pointerEvents: "none",
+            zIndex: 4,
+          }}
+        >
+          {tickMark}
+        </div>
+      );
+    }
+
     return (
       <button
         key={i}
         type="button"
-        aria-label={markers?.[i]?.shortLabel ?? `Position ${i + 1}`}
+        aria-label={`Channel ${i + 1}`}
         onClick={(e) => {
           e.stopPropagation();
           onSelect(i);
@@ -111,20 +159,7 @@ export default function RotaryDial({
           zIndex: 4,
         }}
       >
-        <span
-          style={{
-            position: "absolute",
-            top: 5,
-            left: "50%",
-            width: active ? 4 : 3,
-            height: active ? 14 : 9,
-            marginLeft: active ? -2 : -1.5,
-            borderRadius: 1,
-            background: active ? "#F59E0B" : "#3A3F50",
-            boxShadow: active ? "0 0 8px #F59E0B88" : "none",
-            pointerEvents: "none",
-          }}
-        />
+        {tickMark}
       </button>
     );
   });
@@ -136,51 +171,65 @@ export default function RotaryDial({
       const active = i === channelIndex;
       const Icon = m.icon;
       const rad = ((a - 90) * Math.PI) / 180;
-      const r = size / 2 + ringPad * 0.55;
+      const r = size / 2 + ringPad * 0.58;
       const cx = outer / 2 + Math.cos(rad) * r;
       const cy = outer / 2 + Math.sin(rad) * r;
       return (
-        <button
+        <div
           key={m.id}
-          type="button"
-          aria-label={m.shortLabel}
-          aria-pressed={active}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(i);
-          }}
-          className="console-focus"
           style={{
             position: "absolute",
             left: cx,
             top: cy,
-            transform: "translate(-50%, -50%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 2,
-            border: "none",
-            background: "transparent",
-            padding: 4,
-            cursor: "pointer",
+            width: keySize,
+            height: keySize,
+            marginLeft: -(keySize / 2),
+            marginTop: -(keySize / 2),
             zIndex: 6,
-            color: active ? "#F59E0B" : "#5A6070",
-            filter: active ? "drop-shadow(0 0 6px #F59E0B66)" : "none",
           }}
         >
-          <Icon size={size < 110 ? 12 : 14} strokeWidth={active ? 2.25 : 1.75} />
-          <span
+          <motion.button
+            type="button"
+            aria-label={m.shortLabel}
+            aria-pressed={active}
+            title={m.shortLabel}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(i);
+            }}
+            whileHover={reducedMotion ? undefined : keycapHover}
+            whileTap={reducedMotion ? undefined : keycapTap}
+            transition={keycapTransition}
+            className="console-focus rim-mark"
             style={{
-              fontFamily: "'Chakra Petch', sans-serif",
-              fontSize: size < 110 ? 8 : 9,
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              lineHeight: 1,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              padding: 0,
+              cursor: "pointer",
+              color: active ? "#F5A00F" : "#94A3B8",
+              ...keycapFace,
+              ...(active ? keycapFaceActive : null),
             }}
           >
-            {m.shortLabel}
-          </span>
-        </button>
+            <Icon size={iconPx} strokeWidth={active ? 2.35 : 2} />
+            <span
+              style={{
+                fontFamily: "'Chakra Petch', sans-serif",
+                fontSize: size < 110 ? 7 : 8,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                lineHeight: 1,
+              }}
+            >
+              {m.shortLabel}
+            </span>
+          </motion.button>
+        </div>
       );
     });
 
@@ -258,9 +307,9 @@ export default function RotaryDial({
             borderRadius: "50%",
             pointerEvents: "none",
             background:
-              "radial-gradient(circle at 32% 28%, #3A4050 0%, #1A1D24 42%, #0C0E13 100%)",
+              "radial-gradient(circle at 32% 28%, #3A4050 0%, #1A1D24 42%, #11141B 100%)",
             boxShadow:
-              "inset 0 1px 0 #ffffff18, inset 0 -3px 8px #000000aa, 0 0 0 1px #1C1F27",
+              "inset 0 1px 0 #ffffff18, inset 0 -3px 8px #000000aa, 0 0 0 1px #252B3A",
             zIndex: 1,
           }}
         />
@@ -291,8 +340,8 @@ export default function RotaryDial({
               marginLeft: -2,
               borderRadius: 2,
               background:
-                "linear-gradient(180deg, #FCD34D 0%, #F59E0B 55%, #B45309 100%)",
-              boxShadow: "0 0 10px #F59E0B99",
+                "linear-gradient(180deg, #FCD34D 0%, #F5A00F 55%, #925B03 100%)",
+              boxShadow: "0 0 10px #F5A00F99",
             }}
           />
           <div
@@ -308,7 +357,7 @@ export default function RotaryDial({
               background:
                 "radial-gradient(circle at 35% 30%, #2F3440 0%, #14161C 70%, #08090C 100%)",
               boxShadow:
-                "inset 0 1px 0 #ffffff12, 0 0 0 1px #1C1F27, 0 2px 4px #00000088",
+                "inset 0 1px 0 #ffffff12, 0 0 0 1px #252B3A, 0 2px 4px #00000088",
             }}
           />
           {/* Counter-rotated specular so light stays fixed in space */}

@@ -2,6 +2,7 @@ import { useRef, type ReactNode } from "react";
 import {
   animate,
   motion,
+  useMotionTemplate,
   useMotionValue,
   useTransform,
 } from "framer-motion";
@@ -19,19 +20,19 @@ function ChassisShadow({
       aria-hidden
       style={{
         position: "absolute",
-        left: "10%",
-        right: "10%",
-        bottom: 8,
-        height: 44,
+        left: "6%",
+        right: "6%",
+        bottom: 4,
+        height: 56,
         borderRadius: "50%",
         background:
-          "radial-gradient(ellipse at center, #000000dd 0%, #00000088 35%, transparent 72%)",
-        filter: "blur(10px)",
+          "radial-gradient(ellipse at center, #000000ee 0%, #00000099 32%, #00000044 58%, transparent 78%)",
+        filter: "blur(12px)",
         zIndex: 0,
         pointerEvents: "none",
         x,
         y,
-        opacity: 0.9,
+        opacity: 0.95,
       }}
     />
   );
@@ -42,10 +43,13 @@ export function RecessedWell({
   children,
   className,
   style,
+  overflow = "hidden",
 }: {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  /** Use "auto" when tall controls (e.g. tuner) must remain reachable. */
+  overflow?: "hidden" | "auto";
 }) {
   return (
     <div
@@ -53,20 +57,23 @@ export function RecessedWell({
       style={{
         padding: 5,
         borderRadius: 16,
-        background: "linear-gradient(165deg, #050607 0%, #0C0E14 55%, #08090E 100%)",
+        background: "linear-gradient(165deg, #050607 0%, #11141B 55%, #0A0B0E 100%)",
         boxShadow:
-          "inset 0 5px 14px #000000dd, inset 0 1px 0 #ffffff0a, inset 0 -1px 0 #1C1F2744, 0 1px 0 #1A1D24",
+          "inset 0 5px 14px #000000dd, inset 0 1px 0 #ffffff0a, inset 0 -1px 0 #252B3A44, 0 1px 0 #252B3A",
         minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
         ...style,
       }}
     >
       <div
         style={{
+          flex: 1,
           height: "100%",
           minHeight: 0,
           borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 0 0 1px #1C1F27",
+          overflow,
+          boxShadow: "0 0 0 1px #252B3A",
         }}
       >
         {children}
@@ -82,7 +89,11 @@ type PerspectiveChassisProps = {
   style?: React.CSSProperties;
 };
 
-/** Desktop deck with slight perspective + pointer tilt. */
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+/** Desktop deck — tiny pointer tilt for depth only (never flips). */
 export default function PerspectiveChassis({
   children,
   reducedMotion = false,
@@ -90,46 +101,53 @@ export default function PerspectiveChassis({
   style,
 }: PerspectiveChassisProps) {
   const shellRef = useRef<HTMLDivElement>(null);
-  const restX = 2.5;
-  const maxY = 3;
-  const maxXDelta = 2;
+  // Depth cue only — hard ceiling well below anything that looks like a flip
+  const restX = 1.2;
+  const maxY = 1.5;
+  const maxXDelta = 0.9;
+  const liftZ = 6;
+
   const rotateX = useMotionValue(reducedMotion ? 0 : restX);
   const rotateY = useMotionValue(0);
+  const animRef = useRef<{ stop: () => void }[]>([]);
 
-  // Contact shadow slides opposite the card tilt (clamped range)
-  const shadowX = useTransform(rotateY, [-maxY, maxY], [14, -14]);
+  const stopAnims = () => {
+    animRef.current.forEach((a) => a.stop());
+    animRef.current = [];
+  };
+
+  // Contact shadow slides opposite the card tilt (small travel)
+  const shadowX = useTransform(rotateY, [-maxY, maxY], [8, -8]);
   const shadowY = useTransform(
     rotateX,
     [restX - maxXDelta, restX + maxXDelta],
-    [10, -2],
+    [6, 0],
   );
+
+  // Single transform string with explicit deg — no unit ambiguity / spring overshoot past caps
+  const transform = useMotionTemplate`translateZ(${liftZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
 
   const onMove = (e: React.MouseEvent) => {
     if (reducedMotion || !shellRef.current) return;
-    // Measure the untransformed shell so tilt never feeds back into the hit rect
+    stopAnims();
     const rect = shellRef.current.getBoundingClientRect();
     if (rect.width < 1 || rect.height < 1) return;
-    const px = Math.max(
-      -0.5,
-      Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5),
-    );
-    const py = Math.max(
-      -0.5,
-      Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5),
-    );
-    const nextY = Math.max(-maxY, Math.min(maxY, px * (maxY * 2)));
-    const nextX = Math.max(
-      restX - maxXDelta,
-      Math.min(restX + maxXDelta, restX - py * (maxXDelta * 2)),
-    );
-    rotateY.set(nextY);
-    rotateX.set(nextX);
+
+    const px = clamp((e.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
+    const py = clamp((e.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
+
+    rotateY.set(clamp(px * (maxY * 2), -maxY, maxY));
+    rotateX.set(clamp(restX - py * (maxXDelta * 2), restX - maxXDelta, restX + maxXDelta));
   };
 
   const onLeave = () => {
     if (reducedMotion) return;
-    animate(rotateX, restX, { type: "spring", stiffness: 120, damping: 18 });
-    animate(rotateY, 0, { type: "spring", stiffness: 120, damping: 18 });
+    stopAnims();
+    // Tween (not spring) so leave never overshoots past rest
+    animRef.current = [
+      animate(rotateX, restX, { type: "tween", duration: 0.35, ease: "easeOut" }),
+      animate(rotateY, 0, { type: "tween", duration: 0.35, ease: "easeOut" }),
+    ];
   };
 
   return (
@@ -138,19 +156,38 @@ export default function PerspectiveChassis({
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={{
-        perspective: 1800,
-        perspectiveOrigin: "50% 45%",
-        padding: "36px 28px 56px",
+        perspective: 2400,
+        perspectiveOrigin: "50% 42%",
+        padding: "40px 32px 64px",
         position: "relative",
-        // Contrasting stage — lighter titanium recess the card sits in
-        background:
-          "radial-gradient(ellipse 80% 70% at 50% 42%, #1A1F2A 0%, #12161E 45%, #0A0C10 100%)",
-        borderRadius: 48,
-        boxShadow:
-          "inset 0 1px 0 #3A425544, inset 0 -20px 40px #00000088, inset 0 0 0 1px #0E1016",
+        // Desk / tray — cooler mid-tones so contact shadow + deck face separate
+        background: `
+          radial-gradient(ellipse 70% 55% at 50% 40%, #252B3A 0%, transparent 58%),
+          linear-gradient(165deg, #1A2030 0%, #11141B 42%, #0C0F16 78%, #0A0B0E 100%)
+        `,
+        borderRadius: 52,
+        boxShadow: `
+          inset 0 1px 0 #525F7B44,
+          inset 0 -28px 48px #00000099,
+          inset 0 0 0 1px #0E1218,
+          0 1px 0 #252B3A44
+        `,
       }}
     >
-      {/* Stage floor vignette for extra separation from page */}
+      {/* Surface grain / tray lip */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 10,
+          borderRadius: 44,
+          background:
+            "linear-gradient(180deg, #ffffff08 0%, transparent 18%, transparent 70%, #00000055 100%)",
+          boxShadow: "inset 0 0 0 1px #252B3A66",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
       <div
         aria-hidden
         style={{
@@ -158,7 +195,7 @@ export default function PerspectiveChassis({
           inset: 12,
           borderRadius: 40,
           background:
-            "radial-gradient(ellipse at 50% 100%, #00000066 0%, transparent 55%)",
+            "radial-gradient(ellipse at 50% 100%, #00000088 0%, transparent 50%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -170,17 +207,17 @@ export default function PerspectiveChassis({
           aria-hidden
           style={{
             position: "absolute",
-            left: "10%",
-            right: "10%",
-            bottom: 8,
-            height: 44,
+            left: "6%",
+            right: "6%",
+            bottom: 4,
+            height: 56,
             borderRadius: "50%",
             background:
-              "radial-gradient(ellipse at center, #000000dd 0%, transparent 72%)",
-            filter: "blur(10px)",
+              "radial-gradient(ellipse at center, #000000ee 0%, transparent 72%)",
+            filter: "blur(12px)",
             zIndex: 0,
             pointerEvents: "none",
-            opacity: 0.75,
+            opacity: 0.85,
           }}
         />
       )}
@@ -188,18 +225,16 @@ export default function PerspectiveChassis({
       <motion.div
         className={className}
         style={{
-          rotateX,
-          rotateY,
-          // Micro lift so perspective separates face from stage at rest
-          z: reducedMotion ? 0 : 8,
+          ...style,
+          // Transform last so parent style never overrides tilt
+          transform: reducedMotion ? undefined : transform,
           transformStyle: "preserve-3d",
           transformOrigin: "center center",
           position: "relative",
           zIndex: 1,
-          ...style,
+          willChange: reducedMotion ? undefined : "transform",
         }}
       >
-        {/* Extruded outer bezel lip — sharper luminance rim */}
         <div
           aria-hidden
           style={{
@@ -207,20 +242,19 @@ export default function PerspectiveChassis({
             inset: -11,
             borderRadius: 42,
             background:
-              "linear-gradient(155deg, #3A4250 0%, #1C212C 22%, #12151C 55%, #06080B 100%)",
+              "linear-gradient(155deg, #525F7B 0%, #252B3A 22%, #11141B 55%, #0A0B0E 100%)",
             boxShadow: `
               0 20px 0 #040506,
               0 26px 48px #000000bb,
-              inset 0 1px 0 #6A738844,
+              inset 0 1px 0 #94A3B844,
               inset 0 -2px 0 #000000aa,
-              inset 1px 0 0 #2A303A44,
+              inset 1px 0 0 #252B3A44,
               inset -1px 0 0 #00000066
             `,
             zIndex: -1,
             transform: "translateZ(-14px)",
           }}
         />
-        {/* Thin bright ring peeking around the face */}
         <div
           aria-hidden
           style={{
@@ -229,7 +263,7 @@ export default function PerspectiveChassis({
             borderRadius: 34,
             pointerEvents: "none",
             boxShadow:
-              "0 0 0 1px #4A556644, inset 0 1px 0 #ffffff14, 0 1px 0 #00000088",
+              "0 0 0 1px #525F7B44, inset 0 1px 0 #ffffff14, 0 1px 0 #00000088",
             zIndex: 2,
           }}
         />

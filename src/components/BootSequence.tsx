@@ -51,7 +51,7 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
             position: "fixed",
             inset: 0,
             zIndex: 100,
-            background: "#060709",
+            background: "#0A0B0E",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -64,10 +64,10 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
                 fontFamily: "'Chakra Petch', sans-serif",
                 fontSize: 22,
                 fontWeight: 700,
-                color: "#F59E0B",
+                color: "#F5A00F",
                 letterSpacing: "0.2em",
                 marginBottom: 20,
-                textShadow: "0 0 24px #F59E0B55",
+                textShadow: "0 0 24px #F5A00F55",
               }}
             >
               RS-691
@@ -80,7 +80,7 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
                   animate={{ opacity: idx === line ? 1 : 0.45, x: 0 }}
                   style={{
                     fontSize: 12,
-                    color: idx === line ? "#F59E0B" : "#5A6070",
+                    color: idx === line ? "#F5A00F" : "#525F7B",
                     letterSpacing: "0.08em",
                   }}
                 >

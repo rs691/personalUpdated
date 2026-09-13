@@ -34,7 +34,7 @@ export default function SectionModeDial({
   );
   const active = sections[index] ?? sections[0];
   const Icon = active?.icon;
-  const dialSize = compact ? 108 : 140;
+  const dialSize = compact ? 100 : 132;
 
   const onSelect = (i: number) => {
     const next = sections[i];
@@ -55,11 +55,11 @@ export default function SectionModeDial({
     <div
       style={{
         width: "100%",
-        padding: compact ? 14 : 18,
+        padding: compact ? 10 : 14,
         borderRadius: 16,
         background:
-          "linear-gradient(180deg, #0E1016 0%, #08090E 55%, #060709 100%)",
-        border: "1px solid #1C1F27",
+          "linear-gradient(180deg, #0E1016 0%, #0A0B0E 55%, #0A0B0E 100%)",
+        border: "1px solid #252B3A",
         boxShadow:
           "inset 0 4px 14px #000000cc, inset 0 1px 0 #ffffff0a, 0 1px 0 #12141A",
         display: "flex",
@@ -92,7 +92,7 @@ export default function SectionModeDial({
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              color: "#3A3F50",
+              color: "#525F7B",
               letterSpacing: "0.2em",
             }}
           >
@@ -107,10 +107,10 @@ export default function SectionModeDial({
               minHeight: compact ? 88 : 108,
               borderRadius: 12,
               background:
-                "linear-gradient(165deg, #0A0C11 0%, #060709 55%, #050607 100%)",
-              border: "1px solid #272A34",
+                "linear-gradient(165deg, #0A0C11 0%, #0A0B0E 55%, #050607 100%)",
+              border: "1px solid #252B3A",
               boxShadow:
-                "inset 0 2px 10px #000000cc, inset 0 1px 0 #ffffff0a, 0 0 28px #F59E0B10",
+                "inset 0 2px 10px #000000cc, inset 0 1px 0 #ffffff0a, 0 0 28px #F5A00F10",
             }}
           >
             {Icon && (
@@ -123,12 +123,12 @@ export default function SectionModeDial({
                   alignItems: "center",
                   justifyContent: "center",
                   background: "#12151C",
-                  border: "1px solid #F59E0B33",
-                  boxShadow: "0 0 16px #F59E0B22",
+                  border: "1px solid #F5A00F33",
+                  boxShadow: "0 0 16px #F5A00F22",
                   flexShrink: 0,
                 }}
               >
-                <Icon size={compact ? 18 : 20} style={{ color: "#F59E0B" }} />
+                <Icon size={compact ? 18 : 20} style={{ color: "#F5A00F" }} />
               </div>
             )}
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -145,7 +145,7 @@ export default function SectionModeDial({
                       fontFamily: "'Chakra Petch', sans-serif",
                       fontSize: compact ? 16 : 20,
                       fontWeight: 700,
-                      color: "#F59E0B",
+                      color: "#F5A00F",
                       letterSpacing: "0.1em",
                       lineHeight: 1.15,
                       marginBottom: 6,
@@ -157,7 +157,7 @@ export default function SectionModeDial({
                     style={{
                       fontFamily: "'JetBrains Mono', monospace",
                       fontSize: compact ? 11 : 12,
-                      color: "#8A909E",
+                      color: "#94A3B8",
                       letterSpacing: "0.02em",
                       lineHeight: 1.45,
                       marginBottom: 10,
@@ -169,7 +169,7 @@ export default function SectionModeDial({
                     style={{
                       fontFamily: "'JetBrains Mono', monospace",
                       fontSize: 10,
-                      color: "#3A3F50",
+                      color: "#525F7B",
                       letterSpacing: "0.12em",
                     }}
                   >

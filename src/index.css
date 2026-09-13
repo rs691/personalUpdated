@@ -9,20 +9,34 @@
 
 @theme {
   --color-obsidian: #0A0B0E;
+  --color-surface: #11141B;
   --color-titanium: #181A20;
   --color-chassis: #0D0E11;
-  --color-panel: #13151B;
-  --color-border: #272A34;
-  --color-border-bright: #3A3F50;
-  --color-amber: #F59E0B;
-  --color-amber-dim: #B45309;
+  --color-panel: #11141B;
+  --color-border: #252B3A;
+  --color-border-bright: #525F7B;
+  --color-muted: #525F7B;
+  --color-slate: #94A3B8;
+  --color-amber: #F5A00F;
+  --color-amber-dim: #925B03;
   --color-amber-glow: #FCD34D;
   --color-screen-bg: #0C0F14;
   --color-text-primary: #E8E2D0;
-  --color-text-secondary: #8A8577;
-  --color-text-amber: #F59E0B;
+  --color-text-secondary: #94A3B8;
+  --color-text-amber: #F5A00F;
   --font-mono: 'JetBrains Mono', monospace;
   --font-display: 'Chakra Petch', sans-serif;
+}
+
+:root {
+  --obsidian: #0A0B0E;
+  --surface: #11141B;
+  --border: #252B3A;
+  --muted: #525F7B;
+  --slate: #94A3B8;
+  --amber: #F5A00F;
+  --amber-deep: #925B03;
+  --amber-glow: #FCD34D;
 }
 
 * {
@@ -48,14 +62,14 @@ html, body {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #13151B;
+  background: #11141B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #272A34;
+  background: #252B3A;
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #F59E0B;
+  background: #F5A00F;
 }
 
 .font-mono { font-family: 'JetBrains Mono', monospace; }
@@ -76,8 +90,8 @@ html, body {
 }
 
 @keyframes pulse-amber {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px #F59E0B; }
-  50% { opacity: 0.6; box-shadow: 0 0 2px #F59E0B; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px #F5A00F; }
+  50% { opacity: 0.6; box-shadow: 0 0 2px #F5A00F; }
 }
 
 @keyframes trace-flow {
@@ -124,8 +138,13 @@ html, body {
 }
 
 .console-focus:focus-visible {
-  outline: 2px solid #F59E0B;
+  outline: 2px solid #F5A00F;
   outline-offset: 3px;
+}
+
+.rim-mark:focus-visible {
+  outline: 2px solid #F5A00F;
+  outline-offset: 2px;
 }
 
 @keyframes amber-float {
@@ -157,8 +176,8 @@ html, body {
 }
 
 @keyframes chassis-breathe {
-  0%, 100% { box-shadow: 0 0 80px #F59E0B0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
-  50% { box-shadow: 0 0 100px #F59E0B14, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
+  0%, 100% { box-shadow: 0 0 80px #F5A00F0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
+  50% { box-shadow: 0 0 100px #F5A00F14, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
 }
 
 .chassis-breathe {

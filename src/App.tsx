@@ -336,7 +336,7 @@ function LiveClock() {
   }, []);
   const pad = (n: number) => String(n).padStart(2, "0");
   return (
-    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F59E0B", letterSpacing: "0.12em" }}>
+    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F5A00F", letterSpacing: "0.12em" }}>
       {pad(time.getHours())}:{pad(time.getMinutes())}:{pad(time.getSeconds())}
     </span>
   );
@@ -351,9 +351,10 @@ function StatusBar({ category, channelIndex, total, compact = false }: { categor
       className="flex items-center gap-4 shrink-0"
       style={{
         height: compact ? 34 : 38,
-        padding: `0 ${compact ? 14 : 24}px`,
-        borderBottom: "1px solid #1C1F27",
-        background: "linear-gradient(90deg, #0C0E13 0%, #0A0B0E 100%)",
+        // Clear corner fasteners on desktop (non-compact)
+        padding: `0 ${compact ? 14 : 44}px`,
+        borderBottom: "1px solid #252B3A",
+        background: "linear-gradient(90deg, #11141B 0%, #0A0B0E 100%)",
         position: "relative",
         zIndex: 10,
       }}
@@ -361,23 +362,23 @@ function StatusBar({ category, channelIndex, total, compact = false }: { categor
       <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: compact ? 9 : 10, fontWeight: 700, color: "#2A2D38", letterSpacing: "0.3em" }}>
         RS-691
       </div>
-      <div style={{ width: 1, height: 12, background: "#1C1F27" }} />
+      <div style={{ width: 1, height: 12, background: "#252B3A" }} />
       <div className="flex items-center gap-2">
-        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 6px #F59E0B", flexShrink: 0 }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#F59E0B", letterSpacing: "0.18em", whiteSpace: "nowrap" }}>
+        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 6px #F5A00F", flexShrink: 0 }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#F5A00F", letterSpacing: "0.18em", whiteSpace: "nowrap" }}>
           {compact ? cat?.shortLabel : cat?.label}
         </span>
       </div>
-      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#3A3F50", letterSpacing: "0.12em" }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#525F7B", letterSpacing: "0.12em" }}>
         {String(channelIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
       </span>
       <div style={{ flex: 1 }} />
       <div className="flex items-end gap-0.5">
         {[3, 5, 7, 9, 11].map((h, i) => (
-          <div key={i} style={{ width: 3, height: h, borderRadius: 1, background: i < 4 ? "#F59E0B" : "#1C1F27", opacity: i < 4 ? 0.8 : 1 }} />
+          <div key={i} style={{ width: 3, height: h, borderRadius: 1, background: i < 4 ? "#F5A00F" : "#252B3A", opacity: i < 4 ? 0.8 : 1 }} />
         ))}
       </div>
-      <div style={{ width: 1, height: 12, background: "#1C1F27" }} />
+      <div style={{ width: 1, height: 12, background: "#252B3A" }} />
       <LiveClock />
     </div>
   );
@@ -388,13 +389,13 @@ function StatusBar({ category, channelIndex, total, compact = false }: { categor
 function Fastener({ rotation }: { rotation: number }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="9" fill="#13151B" stroke="#272A34" strokeWidth="1" />
-      <circle cx="10" cy="10" r="5.5" fill="#1C1F27" stroke="#3A3F50" strokeWidth="0.5" />
+      <circle cx="10" cy="10" r="9" fill="#11141B" stroke="#252B3A" strokeWidth="1" />
+      <circle cx="10" cy="10" r="5.5" fill="#252B3A" stroke="#525F7B" strokeWidth="0.5" />
       <g transform={`rotate(${rotation} 10 10)`}>
-        <line x1="10" y1="4.5" x2="10" y2="15.5" stroke="#3A3F50" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="4.5" y1="10" x2="15.5" y2="10" stroke="#3A3F50" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="10" y1="4.5" x2="10" y2="15.5" stroke="#525F7B" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="4.5" y1="10" x2="15.5" y2="10" stroke="#525F7B" strokeWidth="1.5" strokeLinecap="round" />
       </g>
-      <circle cx="10" cy="10" r="1.8" fill="#272A34" />
+      <circle cx="10" cy="10" r="1.8" fill="#252B3A" />
     </svg>
   );
 }
@@ -404,10 +405,10 @@ function Fastener({ rotation }: { rotation: number }) {
 function CircuitTraces() {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 720" preserveAspectRatio="none" style={{ zIndex: 1 }}>
-      <path d="M 220 160 L 380 160 L 400 180 L 800 180 L 820 160 L 980 160" stroke="#F59E0B" strokeWidth="0.7" fill="none" opacity="0.12" strokeDasharray="6 5" />
-      <path d="M 220 560 L 360 560 L 380 540 L 820 540 L 840 560 L 980 560" stroke="#F59E0B" strokeWidth="0.7" fill="none" opacity="0.08" strokeDasharray="8 6" />
+      <path d="M 220 160 L 380 160 L 400 180 L 800 180 L 820 160 L 980 160" stroke="#F5A00F" strokeWidth="0.7" fill="none" opacity="0.12" strokeDasharray="6 5" />
+      <path d="M 220 560 L 360 560 L 380 540 L 820 540 L 840 560 L 980 560" stroke="#F5A00F" strokeWidth="0.7" fill="none" opacity="0.08" strokeDasharray="8 6" />
       {[{ cx: 980, cy: 160, dur: "2.1s" }, { cx: 980, cy: 560, dur: "3.4s" }, { cx: 220, cy: 160, dur: "1.7s" }, { cx: 220, cy: 560, dur: "2.8s" }].map(({ cx, cy, dur }, i) => (
-        <circle key={i} cx={cx} cy={cy} r="2.5" fill="#F59E0B" opacity="0.5">
+        <circle key={i} cx={cx} cy={cy} r="2.5" fill="#F5A00F" opacity="0.5">
           <animate attributeName="opacity" values="0.5;0.1;0.5" dur={dur} repeatCount="indefinite" />
         </circle>
       ))}
@@ -422,11 +423,13 @@ function ChannelTuner({
   total,
   onSelect,
   horizontal = false,
+  reducedMotion = false,
 }: {
   channelIndex: number;
   total: number;
   onSelect: (index: number) => void;
   horizontal?: boolean;
+  reducedMotion?: boolean;
 }) {
   const onStep = (direction: 1 | -1) => {
     onSelect((channelIndex + direction + total) % total);
@@ -439,33 +442,22 @@ function ChannelTuner({
         flexDirection: horizontal ? "row" : "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: horizontal ? 14 : 16,
+        gap: horizontal ? 14 : 12,
         flexWrap: horizontal ? "wrap" : "nowrap",
+        width: "100%",
       }}
     >
-      {!horizontal && (
-        <div
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 9,
-            color: "#3A3F50",
-            letterSpacing: "0.22em",
-          }}
-        >
-          CHANNEL SELECT
-        </div>
-      )}
       <TickChannelNumber
         value={channelIndex + 1}
         total={total}
-        scale={horizontal ? 0.95 : 1.15}
+        scale={horizontal ? 0.95 : 1}
       />
       <RotaryDial
         channelIndex={channelIndex}
         total={total}
         onStep={onStep}
         onSelect={onSelect}
-        size={horizontal ? 110 : 148}
+        size={horizontal ? 110 : 120}
       />
       <ChannelGauge
         channelIndex={channelIndex}
@@ -473,6 +465,7 @@ function ChannelTuner({
         onStep={onStep}
         onSelect={onSelect}
         compact={horizontal}
+        reducedMotion={reducedMotion}
       />
     </div>
   );
@@ -511,28 +504,28 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
   return (
     <div className="h-full flex flex-col overflow-hidden" style={{
       background: "linear-gradient(180deg, #0C0F14 0%, #090B10 100%)",
-      border: "1px solid #1C1F27", borderRadius: 10, position: "relative",
+      border: "1px solid #252B3A", borderRadius: 10, position: "relative",
       boxShadow: "inset 0 1px 0 #ffffff08, 0 8px 24px #00000055",
     }}>
       <NoiseLayer opacity={0.03} />
-      <div style={{ borderBottom: "1px solid #1C1F27", padding: "8px 14px", background: "#0A0C11", flexShrink: 0, display: "flex", alignItems: "center", gap: 8, position: "relative", zIndex: 2 }}>
-        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 6px #F59E0B", animation: "pulse-amber 2s ease-in-out infinite" }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#F59E0B", letterSpacing: "0.18em" }}>SYSTEM PROFILE</span>
+      <div style={{ borderBottom: "1px solid #252B3A", padding: "8px 14px", background: "#0A0C11", flexShrink: 0, display: "flex", alignItems: "center", gap: 8, position: "relative", zIndex: 2 }}>
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 6px #F5A00F", animation: "pulse-amber 2s ease-in-out infinite" }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#F5A00F", letterSpacing: "0.18em" }}>SYSTEM PROFILE</span>
       </div>
       <div className="flex-1 overflow-y-auto" style={{ padding: compact ? "12px 12px" : "16px", position: "relative", zIndex: 2 }}>
-        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: compact ? 20 : 24, fontWeight: 700, color: "#F59E0B", letterSpacing: "0.06em", lineHeight: 1.1, textShadow: "0 0 24px #F59E0B44", marginBottom: 4, whiteSpace: "pre-line" }}>
+        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: compact ? 20 : 24, fontWeight: 700, color: "#F5A00F", letterSpacing: "0.06em", lineHeight: 1.1, textShadow: "0 0 24px #F5A00F44", marginBottom: 4, whiteSpace: "pre-line" }}>
           {compact ? "ROBERT STEWART" : "ROBERT\nSTEWART"}
         </div>
-        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 11, color: "#6A7080", letterSpacing: "0.14em", marginBottom: 14 }}>
+        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 11, color: "#525F7B", letterSpacing: "0.14em", marginBottom: 14 }}>
           FULL-STACK SOFTWARE ENGINEER
         </div>
-        <div style={{ height: 1, background: "linear-gradient(90deg, #F59E0B22, transparent)", marginBottom: 12 }} />
+        <div style={{ height: 1, background: "linear-gradient(90deg, #F5A00F22, transparent)", marginBottom: 12 }} />
         <div style={{ display: "flex", flexDirection: "column", gap: compact ? S.sm : S.md, marginBottom: S.md }}>
           {PROFILE_LINKS.map(({ Icon, text, href }) => {
             const inner = (
               <>
-                <Icon size={12} style={{ color: "#F59E0B", opacity: 0.55, flexShrink: 0 }} />
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: href ? "#8A9AB0" : "#6A7080", lineHeight: 1.3, wordBreak: "break-all", textDecoration: href ? "underline" : "none", textUnderlineOffset: 3 }}>{text}</span>
+                <Icon size={12} style={{ color: "#F5A00F", opacity: 0.55, flexShrink: 0 }} />
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: href ? "#8A9AB0" : "#525F7B", lineHeight: 1.3, wordBreak: "break-all", textDecoration: href ? "underline" : "none", textUnderlineOffset: 3 }}>{text}</span>
               </>
             );
             if (href) {
@@ -558,17 +551,17 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
         </div>
         {!compact && (
           <>
-            <div style={{ height: 1, background: "#1C1F27", marginBottom: 12 }} />
+            <div style={{ height: 1, background: "#252B3A", marginBottom: 12 }} />
             <div style={{ background: "#06080B", border: "1px solid #1A1D24", borderRadius: 5, padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
               <div style={{ color: "#3A4050" }}>{"// context"}</div>
               {[["currentRole",'"NE Innovation Labs"'],["degree",'"M.S. Data Science"'],["cloud",'"AWS ECS Fargate"'],["ai",'"Gemini Multi-Agent"'],["isolation",'"JWT_CLAIM_RLS"']].map(([k, v]) => (
                 <div key={k}><span style={{ color: "#6A7A9A" }}>{k}</span><span style={{ color: "#2A3040" }}>: </span><span style={{ color: "#6A9058" }}>{v}</span></div>
               ))}
             </div>
-            <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#3A3F50", letterSpacing: "0.15em", marginBottom: 8 }}>PRIMARY STACK</div>
+            <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#525F7B", letterSpacing: "0.15em", marginBottom: 8 }}>PRIMARY STACK</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {STACK_BADGES.map(b => (
-                <span key={b} style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, padding: "4px 8px", background: "#0D0F14", border: "1px solid #1C1F27", borderRadius: 3, color: "#5A6070" }}>{b}</span>
+                <span key={b} style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, padding: "4px 8px", background: "#11141B", border: "1px solid #252B3A", borderRadius: 3, color: "#525F7B" }}>{b}</span>
               ))}
             </div>
           </>
@@ -594,88 +587,126 @@ function MainScreen({ category, channelIndex, flickering, fontSize, reducedMotio
   const title = useTypewriter(entry.title, reducedMotion ? 0 : 28, reducedMotion ? 0 : 100);
   const catObj = CATEGORIES.find(c => c.id === category);
   const titleSize = fontSize ?? 52;
-  const bodySize = Math.max(16, Math.min(19, titleSize * 0.36));
+  const bodySize = Math.max(15, Math.min(18, titleSize * 0.32));
   const showFlicker = flickering && !reducedMotion;
 
   return (
     <div className="h-full flex flex-col overflow-hidden" style={{
       background: "linear-gradient(160deg, #0A0C12 0%, #080A0F 100%)",
-      border: "1px solid #1C1F27", borderRadius: 12, position: "relative",
+      border: "1px solid #252B3A", borderRadius: 12, position: "relative",
       boxShadow: "inset 0 1px 0 #ffffff0a, inset 0 0 40px #00000055, 0 12px 40px #00000066",
     }}>
       <div className="scanline-overlay" style={{ zIndex: 6 }} />
       <NoiseLayer opacity={0.05} />
       {!reducedMotion && <AmberGlitter density={14} showSheen />}
-      <div style={{ borderBottom: "1px solid #1C1F27", padding: `${S.sm}px ${S.lg}px`, background: "#08090E", flexShrink: 0, display: "flex", alignItems: "center", gap: S.sm, position: "relative", zIndex: 9 }}>
-        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 8px #F59E0B", animation: reducedMotion ? undefined : "pulse-amber 2s ease-in-out infinite" }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F59E0B", letterSpacing: "0.2em" }}>TELEMETRY FEED</span>
+      <div style={{ borderBottom: "1px solid #252B3A", padding: `${S.sm}px ${S.lg}px`, background: "#0A0B0E", flexShrink: 0, display: "flex", alignItems: "center", gap: S.sm, position: "relative", zIndex: 9 }}>
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 8px #F5A00F", animation: reducedMotion ? undefined : "pulse-amber 2s ease-in-out infinite" }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F5A00F", letterSpacing: "0.2em" }}>TELEMETRY FEED</span>
         <div style={{ flex: 1 }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#3A3F50", letterSpacing: "0.12em" }}>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B", letterSpacing: "0.12em" }}>
           SRC:{catObj?.shortLabel} · CH:{String(channelIndex + 1).padStart(2, "0")}
         </span>
       </div>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${category}-${channelIndex}`}
-          variants={reducedMotion ? undefined : screenVariants}
-          initial={reducedMotion ? false : "enter"}
-          animate={showFlicker ? { opacity: [0.2, 0.9, 0.4, 1], filter: ["blur(3px)", "blur(0px)"] } : reducedMotion ? { opacity: 1 } : "center"}
-          exit={reducedMotion ? undefined : "exit"}
-          transition={{ duration: reducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
-          className="flex-1 flex flex-col overflow-y-auto"
-          style={{ padding: `${S.xl}px ${S.xxl}px`, position: "relative", zIndex: 7 }}
-        >
-          <motion.div initial={reducedMotion ? false : { opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 }}
-            style={{ display: "flex", alignItems: "center", gap: S.sm, marginBottom: S.lg }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#0A0B0E", background: "#F59E0B", padding: "5px 12px", borderRadius: 3, letterSpacing: "0.18em", fontWeight: 600 }}>
-              CH:{String(channelIndex + 1).padStart(2, "0")}
+      <div className="flex-1 relative min-h-0" style={{ zIndex: 7 }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${category}-${channelIndex}`}
+            variants={reducedMotion ? undefined : screenVariants}
+            initial={reducedMotion ? false : "enter"}
+            animate={showFlicker ? { opacity: [0.2, 0.9, 0.4, 1], filter: ["blur(3px)", "blur(0px)"] } : reducedMotion ? { opacity: 1 } : "center"}
+            exit={reducedMotion ? undefined : "exit"}
+            transition={{ duration: reducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0 flex flex-col overflow-y-auto"
+            style={{ padding: `${S.xl}px ${S.xxl}px` }}
+          >
+            <motion.div initial={reducedMotion ? false : { opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 }}
+              style={{ display: "flex", alignItems: "center", gap: S.sm, marginBottom: S.md, flexShrink: 0 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#0A0B0E", background: "#F5A00F", padding: "5px 12px", borderRadius: 3, letterSpacing: "0.18em", fontWeight: 600 }}>
+                CH:{String(channelIndex + 1).padStart(2, "0")}
+              </div>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, #F5A00F44, transparent)" }} />
+            </motion.div>
+
+            <div style={{ position: "relative", marginBottom: S.md, zIndex: 1 }}>
+              {/* Invisible full title reserves height so typewriter doesn't shove content */}
+              <h1
+                aria-hidden
+                style={{
+                  fontFamily: "'Chakra Petch', sans-serif",
+                  fontSize: titleSize,
+                  fontWeight: 700,
+                  letterSpacing: "0.02em",
+                  lineHeight: 1.28,
+                  margin: 0,
+                  padding: 0,
+                  visibility: "hidden",
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
+                }}
+              >
+                {entry.title}
+              </h1>
+              <h1 style={{
+                fontFamily: "'Chakra Petch', sans-serif",
+                fontSize: titleSize,
+                fontWeight: 700,
+                color: "#F0EAD8",
+                letterSpacing: "0.02em",
+                lineHeight: 1.28,
+                textShadow: "0 0 40px #F5A00F14",
+                margin: 0,
+                padding: 0,
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}>
+                {reducedMotion ? entry.title : title}
+                {!reducedMotion && (
+                  <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }} style={{ color: "#F5A00F", marginLeft: 3 }}>
+                    {title.length < entry.title.length ? "▊" : ""}
+                  </motion.span>
+                )}
+              </h1>
             </div>
-            <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, #F59E0B44, transparent)" }} />
+
+            <motion.div initial={reducedMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
+              style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: "#94A3B8", letterSpacing: "0.06em", marginBottom: S.md, lineHeight: 1.5, position: "relative", zIndex: 1 }}>
+              {entry.meta}
+            </motion.div>
+
+            <motion.div initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+              style={{ display: "flex", flexWrap: "wrap", gap: S.sm, marginBottom: S.lg, position: "relative", zIndex: 1 }}>
+              {entry.tags.map((tag, i) => (
+                <motion.span key={tag} initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 + i * 0.04, type: "spring", stiffness: 300, damping: 22 }}
+                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, padding: "5px 12px", background: "#11141B", border: "1px solid #F5A00F2A", borderRadius: 4, color: "#C9954A", letterSpacing: "0.05em" }}>
+                  {tag}
+                </motion.span>
+              ))}
+            </motion.div>
+
+            <div style={{ height: 1, background: "linear-gradient(90deg, #F5A00F1A, transparent)", marginBottom: S.md, flexShrink: 0 }} />
+
+            <div style={{ display: "flex", flexDirection: "column", gap: S.md, position: "relative", zIndex: 1 }}>
+              {entry.body.map((line, i) => (
+                <motion.div key={`${category}-${channelIndex}-${i}`} initial={reducedMotion ? false : { opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.08, type: "spring", stiffness: 260, damping: 26 }}
+                  style={{ display: "flex", alignItems: "flex-start", gap: S.md }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F5A00F", opacity: 0.5, flexShrink: 0, marginTop: 3, letterSpacing: "0.1em" }}>
+                    {String(i + 1).padStart(2, "0")}›
+                  </span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: bodySize, color: "#B8B09A", lineHeight: 1.7, letterSpacing: "0.02em" }}>
+                    {line}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
+            <ActionStrip links={entry.links} reducedMotion={reducedMotion} />
           </motion.div>
-
-          <h1 style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: titleSize, fontWeight: 700, color: "#F0EAD8", letterSpacing: "0.02em", lineHeight: 1.1, textShadow: "0 0 40px #F59E0B14", marginBottom: S.sm, minHeight: titleSize * 1.15 }}>
-            {reducedMotion ? entry.title : title}
-            {!reducedMotion && (
-              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }} style={{ color: "#F59E0B", marginLeft: 3 }}>
-                {title.length < entry.title.length ? "▊" : ""}
-              </motion.span>
-            )}
-          </h1>
-
-          <motion.div initial={reducedMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: "#5A6070", letterSpacing: "0.06em", marginBottom: S.md }}>
-            {entry.meta}
-          </motion.div>
-
-          <motion.div initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            style={{ display: "flex", flexWrap: "wrap", gap: S.sm, marginBottom: S.xl }}>
-            {entry.tags.map((tag, i) => (
-              <motion.span key={tag} initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 + i * 0.04, type: "spring", stiffness: 300, damping: 22 }}
-                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, padding: "5px 12px", background: "#0D1018", border: "1px solid #F59E0B2A", borderRadius: 4, color: "#C9954A", letterSpacing: "0.05em" }}>
-                {tag}
-              </motion.span>
-            ))}
-          </motion.div>
-
-          <div style={{ height: 1, background: "linear-gradient(90deg, #F59E0B1A, transparent)", marginBottom: S.lg }} />
-
-          <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
-            {entry.body.map((line, i) => (
-              <motion.div key={`${category}-${channelIndex}-${i}`} initial={reducedMotion ? false : { opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.08, type: "spring", stiffness: 260, damping: 26 }}
-                style={{ display: "flex", alignItems: "flex-start", gap: S.md }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F59E0B", opacity: 0.5, flexShrink: 0, marginTop: 3, letterSpacing: "0.1em" }}>
-                  {String(i + 1).padStart(2, "0")}›
-                </span>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: bodySize, color: "#B8B09A", lineHeight: 1.65, letterSpacing: "0.02em" }}>
-                  {line}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-
-          <ActionStrip links={entry.links} reducedMotion={reducedMotion} />
-        </motion.div>
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -684,19 +715,25 @@ function MainScreen({ category, channelIndex, flickering, fontSize, reducedMotio
 
 function DesktopLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion }: LayoutProps) {
   const FASTENERS = [-15, 30, 45, 90];
-  const FASTENER_POS = [{ top: 12, left: 14 }, { top: 12, right: 14 }, { bottom: 132, left: 14 }, { bottom: 132, right: 14 }];
+  // True chassis corners on the faceplate lip — clear of status/clock and mode bar
+  const FASTENER_POS = [
+    { top: 8, left: 8 },
+    { top: 8, right: 8 },
+    { bottom: 8, left: 8 },
+    { bottom: 8, right: 8 },
+  ];
   return (
     <PerspectiveChassis
       reducedMotion={reducedMotion}
       className={reducedMotion ? undefined : "chassis-breathe"}
       style={{
         width: "min(1420px, 96vw)",
-        height: "min(880px, 92vh)",
+        height: "min(920px, 94vh)",
         background: "#0A0B0E",
         borderRadius: 32,
         border: "1.5px solid #1A1D24",
         boxShadow:
-          "0 0 80px #F59E0B0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844, inset 0 -1px 0 #00000088",
+          "0 0 80px #F5A00F0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844, inset 0 -1px 0 #00000088",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -716,24 +753,24 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
         <RecessedWell className="flex-1 min-w-0">
           <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={52} reducedMotion={reducedMotion} />
         </RecessedWell>
-        <RecessedWell style={{ width: 236, flexShrink: 0 }}>
-          <div className="flex flex-col items-center justify-center h-full" style={{
-            gap: S.lg,
-            background: "linear-gradient(180deg, #0C0E14 0%, #08090E 100%)",
-            padding: S.lg, position: "relative",
+        <RecessedWell style={{ width: 248, flexShrink: 0, minHeight: 0 }} overflow="auto">
+          <div className="flex flex-col items-center justify-center" style={{
+            gap: S.md,
+            background: "linear-gradient(180deg, #11141B 0%, #0A0B0E 100%)",
+            padding: `${S.md}px ${S.md}px`,
+            position: "relative",
+            minHeight: "100%",
+            boxSizing: "border-box",
           }}>
             <NoiseLayer opacity={0.03} />
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#3A3F50", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
-            <div style={{ position: "relative", zIndex: 2 }}>
-              <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} />
-            </div>
-            <div style={{ position: "relative", zIndex: 2, textAlign: "center", fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#2A2D38", letterSpacing: "0.1em", lineHeight: 1.8 }}>
-              CLICK DIAL · GAUGE ‹ ›<br />← → · MODE DIAL BELOW
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
+            <div style={{ position: "relative", zIndex: 2, width: "100%", display: "flex", justifyContent: "center" }}>
+              <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} reducedMotion={reducedMotion} />
             </div>
           </div>
         </RecessedWell>
       </div>
-      <div style={{ padding: `${S.md}px ${S.xl}px ${S.lg}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
+      <div style={{ padding: `${S.sm}px ${S.xl}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0, paddingLeft: 44, paddingRight: 44 }}>
         <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} />
       </div>
     </PerspectiveChassis>
@@ -756,14 +793,14 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
           <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={42} reducedMotion={reducedMotion} />
         </div>
         <div className="flex flex-col items-center justify-center" style={{
-          width: 210, flexShrink: 0, gap: S.md,
-          background: "linear-gradient(180deg, #0C0E14 0%, #08090E 100%)",
-          border: "1px solid #1C1F27", borderRadius: 12, padding: S.md, position: "relative",
+          width: 220, flexShrink: 0, gap: S.sm, minHeight: 0, overflowY: "auto",
+          background: "linear-gradient(180deg, #11141B 0%, #0A0B0E 100%)",
+          border: "1px solid #252B3A", borderRadius: 12, padding: S.md, position: "relative",
           boxShadow: "inset 0 2px 12px #000000aa",
         }}>
           <NoiseLayer opacity={0.03} />
-          <div style={{ position: "relative", zIndex: 2 }}>
-            <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} />
+          <div style={{ position: "relative", zIndex: 2, width: "100%", display: "flex", justifyContent: "center" }}>
+            <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} reducedMotion={reducedMotion} />
           </div>
         </div>
       </div>
@@ -782,14 +819,14 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
     <div className="relative flex flex-col" style={{ width: "100vw", height: "100dvh", background: "#0A0B0E", overflow: "hidden" }}>
       <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
 
-      <div style={{ display: "flex", alignItems: "center", height: 40, padding: "0 12px", borderBottom: "1px solid #1C1F27", background: "#0C0E13", flexShrink: 0, gap: 8, position: "relative", zIndex: 10 }}>
-        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 10, fontWeight: 700, color: "#3A3F50", letterSpacing: "0.3em" }}>RS-691</div>
-        <div style={{ width: 1, height: 10, background: "#1C1F27" }} />
-        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F59E0B", boxShadow: "0 0 6px #F59E0B" }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F59E0B", letterSpacing: "0.15em" }}>
+      <div style={{ display: "flex", alignItems: "center", height: 40, padding: "0 12px", borderBottom: "1px solid #252B3A", background: "#11141B", flexShrink: 0, gap: 8, position: "relative", zIndex: 10 }}>
+        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 10, fontWeight: 700, color: "#525F7B", letterSpacing: "0.3em" }}>RS-691</div>
+        <div style={{ width: 1, height: 10, background: "#252B3A" }} />
+        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 6px #F5A00F" }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F5A00F", letterSpacing: "0.15em" }}>
           {CATEGORIES.find(c => c.id === category)?.shortLabel}
         </span>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#3A3F50" }}>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B" }}>
           {String(channelIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
         </span>
         <div style={{ flex: 1 }} />
@@ -799,7 +836,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
           className="console-focus"
           style={{ border: "none", background: "none", padding: 4, cursor: "pointer", borderRadius: 6 }}
         >
-          <User size={16} style={{ color: showProfile ? "#F59E0B" : "#3A3F50" }} />
+          <User size={16} style={{ color: showProfile ? "#F5A00F" : "#525F7B" }} />
         </motion.button>
         <LiveClock />
       </div>
@@ -811,7 +848,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
             animate={{ height: 240, opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            style={{ overflow: "hidden", flexShrink: 0, position: "relative", zIndex: 8, borderBottom: "1px solid #1C1F27" }}
+            style={{ overflow: "hidden", flexShrink: 0, position: "relative", zIndex: 8, borderBottom: "1px solid #252B3A" }}
           >
             <ProfilePanel compact />
           </motion.div>
@@ -825,10 +862,10 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: `${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016",
-        background: "linear-gradient(0deg, #08090E 0%, #0A0B0E 100%)",
+        background: "linear-gradient(0deg, #0A0B0E 0%, #0A0B0E 100%)",
         flexShrink: 0, position: "relative", zIndex: 5,
       }}>
-        <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} horizontal />
+        <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} horizontal reducedMotion={reducedMotion} />
       </div>
 
       <div style={{ padding: `${S.sm}px ${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
@@ -962,7 +999,10 @@ export default function App() {
       <BootSequence reducedMotion={reducedMotion} onDone={onBootDone} />
       <motion.div
         className="w-screen h-screen flex items-center justify-center"
-        style={{ background: "#060709" }}
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 70% at 50% 45%, #252B3A 0%, #11141B 42%, #0A0B0E 100%)",
+        }}
         initial={{ opacity: 0 }}
         animate={powered ? { opacity: 1 } : {}}
         transition={{ duration: reducedMotion ? 0 : 0.8 }}
@@ -979,7 +1019,14 @@ export default function App() {
             : isTablet
             ? <TabletLayout {...layoutProps} />
             : (
-              <div className="dot-grid" style={{ background: "#060709", padding: 0 }}>
+              <div
+                style={{
+                  padding: "12px 8px 20px",
+                  background:
+                    "radial-gradient(ellipse 75% 60% at 50% 48%, #252B3A 0%, #11141B 38%, #0A0B0E 72%, transparent 100%)",
+                  borderRadius: 56,
+                }}
+              >
                 <DesktopLayout {...layoutProps} />
               </div>
             )}

@@ -39,8 +39,8 @@ export default function AmberGlitter({
             width: d.size,
             height: d.size,
             borderRadius: "50%",
-            background: "#F59E0B",
-            boxShadow: "0 0 6px #F59E0B88",
+            background: "#F5A00F",
+            boxShadow: "0 0 6px #F5A00F88",
             animation: `amber-float ${d.dur}s ease-in-out ${d.delay}s infinite`,
             opacity: 0.35,
           }}

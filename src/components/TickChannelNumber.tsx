@@ -66,11 +66,11 @@ export default function TickChannelNumber({
   return (
     <div
       style={{
-        background: "#060709",
-        border: "1px solid #1C1F27",
+        background: "#0A0B0E",
+        border: "1px solid #252B3A",
         borderRadius: 8,
         padding: `${10 * scale}px ${16 * scale}px`,
-        boxShadow: "inset 0 2px 12px #00000099, 0 0 28px #F59E0B0a",
+        boxShadow: "inset 0 2px 12px #00000099, 0 0 28px #F5A00F0a",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -82,7 +82,7 @@ export default function TickChannelNumber({
         style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: Math.max(8, 9 * scale),
-          color: "#3A3F50",
+          color: "#525F7B",
           letterSpacing: "0.22em",
         }}
       >
@@ -95,8 +95,8 @@ export default function TickChannelNumber({
             fontSize,
             fontWeight: 700,
             lineHeight: 1,
-            color: "#F59E0B",
-            textShadow: "0 0 24px #F59E0B66",
+            color: "#F5A00F",
+            textShadow: "0 0 24px #F5A00F66",
             fontVariantNumeric: "tabular-nums",
             minWidth: "1.2em",
             textAlign: "right",

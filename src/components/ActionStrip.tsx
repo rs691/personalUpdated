@@ -22,7 +22,7 @@ export default function ActionStrip({ links = [], reducedMotion = false }: Actio
         style={{
           marginTop: 20,
           paddingTop: 16,
-          borderTop: "1px solid #1C1F27",
+          borderTop: "1px solid #252B3A",
           display: "flex",
           gap: 10,
           flexWrap: "wrap",
@@ -60,7 +60,7 @@ export default function ActionStrip({ links = [], reducedMotion = false }: Actio
       style={{
         marginTop: 20,
         paddingTop: 16,
-        borderTop: "1px solid #1C1F27",
+        borderTop: "1px solid #252B3A",
         display: "flex",
         gap: 10,
         flexWrap: "wrap",
@@ -115,14 +115,14 @@ function ActionKey({
     gap: 8,
     padding: "8px 12px",
     borderRadius: 8,
-    border: `1px solid ${active ? "#F59E0B66" : "#272A34"}`,
+    border: `1px solid ${active ? "#F5A00F66" : "#252B3A"}`,
     background: active
       ? "linear-gradient(165deg, #2A2418 0%, #1A1D24 100%)"
       : "linear-gradient(165deg, #1A1D24 0%, #12141A 100%)",
     boxShadow: active
-      ? "inset 0 1px 0 #ffffff14, 0 0 16px #F59E0B22"
+      ? "inset 0 1px 0 #ffffff14, 0 0 16px #F5A00F22"
       : "inset 0 1px 0 #ffffff0c, 0 3px 0 #050607",
-    color: active ? "#F59E0B" : "#C9954A",
+    color: active ? "#F5A00F" : "#C9954A",
     fontFamily: "'JetBrains Mono', monospace",
     fontSize: 11,
     letterSpacing: "0.12em",
