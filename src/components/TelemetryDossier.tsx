@@ -187,7 +187,6 @@ export default function TelemetryDossier({
 
   const { scrollYProgress } = useScroll({
     container: scrollRef,
-    layoutEffect: false,
     trackContentSize: true,
   });
 

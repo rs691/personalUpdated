@@ -12,6 +12,7 @@ import AmberGlitter from "@/components/AmberGlitter";
 import SectionModeDial from "@/components/SectionModeDial";
 import PerspectiveChassis, { RecessedWell } from "@/components/PerspectiveChassis";
 import TelemetryDossier from "@/components/TelemetryDossier";
+import FabricationStamp from "@/components/FabricationStamp";
 import { CONTENT } from "@/content";
 
 /** Consistent spacing rhythm (px) */
@@ -439,14 +440,16 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
         <RecessedWell className="flex-1 min-w-0">
           <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={34} reducedMotion={reducedMotion} />
         </RecessedWell>
-        <RecessedWell style={{ width: 248, flexShrink: 0, minHeight: 0 }} overflow="auto">
+        <RecessedWell style={{ width: 248, flexShrink: 0, minHeight: 0 }} overflow="hidden">
           <div className="flex flex-col items-center justify-center" style={{
             gap: S.md,
             background: "linear-gradient(180deg, #11141B 0%, #0A0B0E 100%)",
             padding: `${S.md}px ${S.md}px`,
             position: "relative",
             minHeight: "100%",
+            height: "100%",
             boxSizing: "border-box",
+            overflow: "hidden",
           }}>
             <NoiseLayer opacity={0.03} />
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
@@ -456,8 +459,9 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
           </div>
         </RecessedWell>
       </div>
-      <div style={{ padding: `${S.sm}px ${S.xl}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0, paddingLeft: 44, paddingRight: 44 }}>
+      <div style={{ padding: `${S.sm}px ${S.xl}px ${S.sm}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0, paddingLeft: 44, paddingRight: 44 }}>
         <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
+        <FabricationStamp />
       </div>
     </PerspectiveChassis>
   );
@@ -479,7 +483,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
           <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={30} reducedMotion={reducedMotion} />
         </div>
         <div className="flex flex-col items-center justify-center" style={{
-          width: 220, flexShrink: 0, gap: S.sm, minHeight: 0, overflowY: "auto",
+          width: 220, flexShrink: 0, gap: S.sm, minHeight: 0, overflow: "hidden",
           background: "linear-gradient(180deg, #11141B 0%, #0A0B0E 100%)",
           border: "1px solid #252B3A", borderRadius: 12, padding: S.md, position: "relative",
           boxShadow: "inset 0 2px 12px #000000aa",
@@ -490,8 +494,9 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
           </div>
         </div>
       </div>
-      <div style={{ padding: `${S.sm}px ${S.md}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
+      <div style={{ padding: `${S.sm}px ${S.md}px ${S.sm}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
         <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
+        <FabricationStamp />
       </div>
     </div>
   );
@@ -558,8 +563,9 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
         <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} horizontal reducedMotion={reducedMotion} />
       </div>
 
-      <div style={{ padding: `${S.sm}px ${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
+      <div style={{ padding: `${S.sm}px ${S.sm}px ${S.sm}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
         <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
+        <FabricationStamp compact />
       </div>
     </div>
   );

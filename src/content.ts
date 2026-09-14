@@ -169,14 +169,17 @@ export const CONTENT: Record<string, ContentEntry[]> = {
       summary:
         "Mentored students across programming and systems courses with an emphasis on Clean Code, TDD, and database design — materials that scaled beyond one-on-one sessions.",
       body: [
-        "Mentored 100+ students in Python, JavaScript, database design, and software engineering",
-        "Code reviews focused on Clean Code, TDD, and system design fundamentals",
-        "Structured review materials and database design rubrics adopted across CIS sections",
+      "In educational and mentorship settings, I guided more than 100 students through foundational software engineering principles, relational database design, Python, and JavaScript.",
+      "Regular code reviews focused on Clean Code standards, test-driven development, and core system design fundamentals.",
+      "Multiple CIS course sections adopted the structured review materials and database design rubrics I created.",
       ],
       detail: [
         "Curriculum support spanning intro programming through database design assessments",
         "Rubrics standardized evaluation quality across multiple course sections",
-      ],
+        "Detailed documentation for each tutoring session, including student progress, code examples, and key concepts covered.",
+        "Learned to navigate complex technical concepts and effectively communicate them to students at different learning levels.",
+        "Developed patience and empathy in guiding students through challenging technical topics.",
+       ],
       links: [
         { label: "UNIVERSITY", href: "https://www.bellevue.edu" },
         resumeLink,
@@ -189,10 +192,10 @@ export const CONTENT: Record<string, ContentEntry[]> = {
       summary:
         "Built internal .NET business apps and modernized IT operations — quoting tooling, CMS safety workflows, directory automation, and endpoint security.",
       body: [
-        "Blazor / C# internal apps on SQL Server via Azure CI/CD",
-        "Cost estimation tool cut manual quote workload by 40%",
-        "JumpCloud provisioning automation reduced admin overhead by 50%",
-        "CrowdStrike Falcon endpoint security across the device fleet",
+        "For internal business operations, I developed enterprise applications using C#, Blazor, and SQL Server, deploying them continuously through Azure CI/CD pipelines.",
+        "Manual quote generation workload dropped by 40% following the launch of a web-based cost estimation tool.",
+        "The internal company CMS was expanded to integrate safety compliance forms, hazard reporting tools, and a centralized service desk ticketing system.",
+        "Administrative overhead was reduced by 50% through automated user provisioning and directory synchronization with JumpCloud, alongside managing endpoint security using CrowdStrike Falcon.",
       ],
       detail: [
         "Integrated safety compliance forms, hazard reporting, and service desk into company CMS",
