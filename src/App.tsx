@@ -430,7 +430,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
           <ProfilePanel />
         </RecessedWell>
         <RecessedWell className="flex-1 min-w-0">
-          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={52} reducedMotion={reducedMotion} />
+          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={34} reducedMotion={reducedMotion} />
         </RecessedWell>
         <RecessedWell style={{ width: 248, flexShrink: 0, minHeight: 0 }} overflow="auto">
           <div className="flex flex-col items-center justify-center" style={{
@@ -469,7 +469,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
       <StatusBar category={category} channelIndex={channelIndex} total={total} compact />
       <div className="flex flex-1" style={{ gap: S.md, padding: S.md, paddingBottom: S.sm, position: "relative", zIndex: 5, minHeight: 0 }}>
         <div className="flex-1 min-w-0">
-          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={42} reducedMotion={reducedMotion} />
+          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={30} reducedMotion={reducedMotion} />
         </div>
         <div className="flex flex-col items-center justify-center" style={{
           width: 220, flexShrink: 0, gap: S.sm, minHeight: 0, overflowY: "auto",
@@ -535,7 +535,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       </AnimatePresence>
 
       <div className="flex-1" style={{ padding: S.sm, paddingBottom: S.xs, minHeight: 0, position: "relative", zIndex: 5 }}>
-        <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={32} reducedMotion={reducedMotion} />
+        <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={28} reducedMotion={reducedMotion} />
       </div>
 
       <div style={{

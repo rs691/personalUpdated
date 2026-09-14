@@ -106,7 +106,7 @@ export default function TelemetryDossier({
   channelIndex,
   categoryShort,
   flickering,
-  fontSize = 52,
+  fontSize = 34,
   reducedMotion = false,
   noiseLayer,
 }: TelemetryDossierProps) {
@@ -128,7 +128,6 @@ export default function TelemetryDossier({
 
   const sheenY = useTransform(scrollYProgress, [0, 1], [0, 18]);
   const gridY = useTransform(scrollYProgress, [0, 1], [0, -10]);
-  const headFade = useTransform(scrollYProgress, [0, 0.18], [1, 0.45]);
   const endCueOpacity = useTransform(scrollYProgress, [0.82, 1], [0, 1]);
 
   const [canScroll, setCanScroll] = useState(false);
@@ -282,11 +281,11 @@ export default function TelemetryDossier({
             }}
             className="absolute inset-0 flex flex-col"
           >
-            {/* Sticky dossier head */}
+            {/* Sticky dossier head — CH + title only */}
             <div
               style={{
                 flexShrink: 0,
-                padding: `${S.lg}px ${S.xxl}px ${S.md}px`,
+                padding: `${S.md}px ${S.xxl}px ${S.sm}px`,
                 background:
                   "linear-gradient(180deg, #0A0C12 70%, #0A0C12ee 100%)",
                 borderBottom: "1px solid #252B3A55",
@@ -299,16 +298,16 @@ export default function TelemetryDossier({
                   display: "flex",
                   alignItems: "center",
                   gap: S.sm,
-                  marginBottom: S.md,
+                  marginBottom: S.sm,
                 }}
               >
                 <div
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 12,
+                    fontSize: 11,
                     color: "#0A0B0E",
                     background: "#F5A00F",
-                    padding: "5px 12px",
+                    padding: "4px 10px",
                     borderRadius: 3,
                     letterSpacing: "0.18em",
                     fontWeight: 600,
@@ -325,7 +324,7 @@ export default function TelemetryDossier({
                 />
               </div>
 
-              <div style={{ position: "relative", marginBottom: S.sm }}>
+              <div style={{ position: "relative" }}>
                 <h1
                   aria-hidden
                   style={{
@@ -333,7 +332,7 @@ export default function TelemetryDossier({
                     fontSize: titleSize,
                     fontWeight: 700,
                     letterSpacing: "0.02em",
-                    lineHeight: 1.28,
+                    lineHeight: 1.2,
                     margin: 0,
                     visibility: "hidden",
                     overflowWrap: "anywhere",
@@ -349,7 +348,7 @@ export default function TelemetryDossier({
                     fontWeight: 700,
                     color: "#F0EAD8",
                     letterSpacing: "0.02em",
-                    lineHeight: 1.28,
+                    lineHeight: 1.2,
                     textShadow: "0 0 40px #F5A00F14",
                     margin: 0,
                     position: "absolute",
@@ -376,8 +375,18 @@ export default function TelemetryDossier({
                   )}
                 </h1>
               </div>
+            </div>
 
-              <motion.div
+            {/* Scrollable dossier body */}
+            <div
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto crt-scroll"
+              style={{
+                padding: `${S.md}px ${S.xxl}px ${S.xxl}px`,
+                position: "relative",
+              }}
+            >
+              <div
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 13,
@@ -385,18 +394,17 @@ export default function TelemetryDossier({
                   letterSpacing: "0.06em",
                   marginBottom: S.sm,
                   lineHeight: 1.45,
-                  opacity: reducedMotion ? 1 : headFade,
                 }}
               >
                 {entry.meta}
-              </motion.div>
+              </div>
 
-              <motion.div
+              <div
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
                   gap: 8,
-                  opacity: reducedMotion ? 1 : headFade,
+                  marginBottom: S.lg,
                 }}
               >
                 {entry.tags.map((tag) => (
@@ -416,18 +424,7 @@ export default function TelemetryDossier({
                     {tag}
                   </span>
                 ))}
-              </motion.div>
-            </div>
-
-            {/* Scrollable dossier body */}
-            <div
-              ref={scrollRef}
-              className="flex-1 overflow-y-auto crt-scroll"
-              style={{
-                padding: `${S.lg}px ${S.xxl}px ${S.xxl}px`,
-                position: "relative",
-              }}
-            >
+              </div>
               <DossierBlock
                 label="SUMMARY"
                 reducedMotion={reducedMotion}
