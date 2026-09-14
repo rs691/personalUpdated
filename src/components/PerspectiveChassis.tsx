@@ -1,11 +1,27 @@
-import { useRef, type ReactNode } from "react";
+import { createContext, useContext, useRef, type ReactNode } from "react";
 import {
   animate,
   motion,
   useMotionTemplate,
   useMotionValue,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
+
+export type ChassisTiltValue = {
+  rotateX: MotionValue<number>;
+  rotateY: MotionValue<number>;
+  restX: number;
+  maxY: number;
+  maxXDelta: number;
+};
+
+const ChassisTiltContext = createContext<ChassisTiltValue | null>(null);
+
+/** Pointer tilt motion values from the desktop deck (null outside PerspectiveChassis). */
+export function useChassisTilt() {
+  return useContext(ChassisTiltContext);
+}
 
 /** Soft floor contact shadow under the deck — shifts opposite tilt. */
 function ChassisShadow({
@@ -222,6 +238,13 @@ export default function PerspectiveChassis({
         />
       )}
 
+      <ChassisTiltContext.Provider
+        value={
+          reducedMotion
+            ? null
+            : { rotateX, rotateY, restX, maxY, maxXDelta }
+        }
+      >
       <motion.div
         className={className}
         style={{
@@ -269,6 +292,7 @@ export default function PerspectiveChassis({
         />
         {children}
       </motion.div>
+      </ChassisTiltContext.Provider>
     </div>
   );
 }

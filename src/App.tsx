@@ -7,11 +7,12 @@ import {
 import RotaryDial from "@/components/RotaryDial";
 import TickChannelNumber from "@/components/TickChannelNumber";
 import ChannelGauge from "@/components/ChannelGauge";
-import ActionStrip, { type ContentLink } from "@/components/ActionStrip";
 import BootSequence from "@/components/BootSequence";
 import AmberGlitter from "@/components/AmberGlitter";
 import SectionModeDial from "@/components/SectionModeDial";
 import PerspectiveChassis, { RecessedWell } from "@/components/PerspectiveChassis";
+import TelemetryDossier from "@/components/TelemetryDossier";
+import { CONTENT } from "@/content";
 
 /** Consistent spacing rhythm (px) */
 const S = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32 } as const;
@@ -49,191 +50,6 @@ const CATEGORIES = [
   { id: "education",  label: "EDUCATION",  shortLabel: "EDU", icon: GraduationCap, detail: "Degrees, coursework, and foundations" },
 ];
 
-type ContentEntry = {
-  title: string;
-  meta: string;
-  tags: string[];
-  body: string[];
-  links?: ContentLink[];
-};
-
-const CONTENT: Record<string, ContentEntry[]> = {
-  projects: [
-    {
-      title: "YourOpoly Platform",
-      meta: "Production · Mobile · Multi-tenant",
-      tags: ["Flutter", "Node.js", "MySQL", "AWS ECS", "Redis", "Socket.io", "Gemini API"],
-      body: [
-        "1,000+ concurrent regional users across live deployment",
-        "Automated tenant onboarding pipeline — 35% reduction in setup time",
-        "QR check-ins, real-time leaderboards, map discovery layer",
-        "Background Gemini multi-agent player intelligence engine",
-        "Shipped to App Store & Google Play — live in production",
-      ],
-      links: [
-        { label: "PORTFOLIO", href: "https://robert-stewart.dev" },
-        { label: "GITHUB", href: "https://github.com/rs691" },
-        { label: "COPY EMAIL", href: "copy:rms.dev@outlook.com", kind: "copy" },
-      ],
-    },
-    {
-      title: "Multi-Product Admin Platform",
-      meta: "Internal Tool · RBAC · Centralized Console",
-      tags: ["Node.js", "React", "Next.js", "MySQL", "AWS"],
-      body: [
-        "Centralized management console for YourOpoly and Good Life Bingo",
-        "Strict RBAC separating super-admin controls from tenant self-service",
-        "Zero cross-tenant data leakage — verified by integration test suite",
-        "Unified audit log and permission matrix across all tenants",
-      ],
-      links: [
-        { label: "GITHUB", href: "https://github.com/rs691" },
-        { label: "COPY EMAIL", href: "copy:rms.dev@outlook.com", kind: "copy" },
-      ],
-    },
-    {
-      title: "Autonomous E-Commerce Platform",
-      meta: "AI-Native · Streaming · Full-Stack",
-      tags: ["Next.js 15", "Supabase", "PostgreSQL", "Stripe", "Vercel AI SDK"],
-      body: [
-        "Streaming AI copilot with pgvector RAG over product catalog",
-        "Server-side function calling pipeline with tool orchestration",
-        "Automated contract evaluations running in CI on every push",
-        "Stripe webhook order persistence with idempotency guarantees",
-      ],
-      links: [
-        { label: "GITHUB", href: "https://github.com/rs691" },
-        { label: "SITE", href: "https://robert-stewart.dev" },
-      ],
-    },
-    {
-      title: "Django Reservation System",
-      meta: "Backend · Scheduling · Transactional",
-      tags: ["Django", "HTMX", "Python", "SQLite"],
-      body: [
-        "Transaction-safe scheduling conflict resolution at the DB layer",
-        "Automated email notification and reminder workflow engine",
-        "HTMX-powered real-time slot availability without full reloads",
-        "Admin dashboard with full conflict audit trail",
-      ],
-      links: [{ label: "GITHUB", href: "https://github.com/rs691" }],
-    },
-    {
-      title: "Multi-Tenant Task Board API",
-      meta: "API · Cloud · CI/CD · Security",
-      tags: ["C#", "ASP.NET Core", "EF Core", "SQLite", "JWT", "Azure"],
-      body: [
-        "EF Core global query filters enforce tenant isolation at ORM layer",
-        "JWT claim-scoped RLS — zero cross-tenant data surface",
-        "Automated GitHub Actions CI/CD pipeline deploying to Azure",
-        "Fully documented OpenAPI surface with contract tests",
-      ],
-      links: [{ label: "GITHUB", href: "https://github.com/rs691" }],
-    },
-  ],
-  experience: [
-    {
-      title: "NE Innovation Labs",
-      meta: "Full-Stack Software Engineer · Dec 2025 – Present",
-      tags: ["Flutter", "AWS ECS", "Gemini", "Groq", "CI/CD"],
-      body: [
-        "Architectural lead for multi-tenant Flutter mobile application suite",
-        "Migrated infrastructure to AWS ECS Fargate — improved scalability 4×",
-        "Built Genkit / Gemini AI workflows running on Groq inference layer",
-        "Implemented semantic CI/CD gates and automated quality rails",
-      ],
-      links: [
-        { label: "LINKEDIN", href: "https://www.linkedin.com/in/robert-stewart-m" },
-        { label: "COPY EMAIL", href: "copy:rms.dev@outlook.com", kind: "copy" },
-      ],
-    },
-    {
-      title: "Bellevue University",
-      meta: "CIS Peer Tutor · Dec 2023 – Apr 2026",
-      tags: ["Python", "JavaScript", "Clean Code", "TDD", "SQL"],
-      body: [
-        "Mentored 100+ students in Clean Code, TDD, and system design",
-        "Delivered Python, JavaScript, and database design curriculum",
-        "Authored standardized database assessment rubrics adopted dept-wide",
-        "Hosted weekly office hours and targeted exam review sessions",
-      ],
-      links: [{ label: "UNIVERSITY", href: "https://www.bellevue.edu" }],
-    },
-    {
-      title: "Pierson Wireless",
-      meta: "Junior Web Developer & IT Specialist · Oct 2022 – Nov 2023",
-      tags: ["Blazor", "C#", "JumpCloud", "CrowdStrike"],
-      body: [
-        "Built Blazor / C# internal tooling — 40% reduction in quoting time",
-        "Automated JumpCloud directory provisioning and deprovisioning",
-        "Deployed CrowdStrike endpoint security across 80+ devices",
-        "Conducted full network infrastructure audit and remediation",
-      ],
-      links: [{ label: "LINKEDIN", href: "https://www.linkedin.com/in/robert-stewart-m" }],
-    },
-  ],
-  skills: [
-    {
-      title: "Languages & Full-Stack",
-      meta: "Frontend · Backend · Mobile",
-      tags: ["TypeScript", "Python", "Java", "C#", "Dart", "SQL"],
-      body: [
-        "TypeScript · JavaScript · Python · Java · C# · Dart · SQL",
-        "React · Next.js · Flutter · HTMX · Tailwind CSS",
-        "REST API design · GraphQL · WebSocket protocols",
-        "Component architecture · accessibility · responsive layout",
-      ],
-      links: [{ label: "GITHUB", href: "https://github.com/rs691" }],
-    },
-    {
-      title: "Backend & Distributed Data",
-      meta: "Services · Databases · Real-time",
-      tags: ["Node.js", "Express", "PostgreSQL", "Redis", "Supabase"],
-      body: [
-        "Node.js · Express · Django · ASP.NET Core",
-        "Socket.io WebSockets · event-driven architecture",
-        "PostgreSQL · MySQL · Redis · SQLite · Supabase · pgvector",
-        "EF Core · ORM-layer tenant isolation · query optimization",
-      ],
-    },
-    {
-      title: "Cloud & AI Orchestration",
-      meta: "Infrastructure · AI · DevOps",
-      tags: ["AWS", "Azure", "Docker", "Gemini API", "GitHub Actions"],
-      body: [
-        "AWS ECS / Lambda / RDS · Azure App Services",
-        "Docker · GitHub Actions CI/CD · automated deployment pipelines",
-        "Gemini API · multi-agent system design · LLM tool calling",
-        "RAG pipelines · pgvector semantic search · Groq inference",
-      ],
-    },
-  ],
-  education: [
-    {
-      title: "Academic Degrees",
-      meta: "Bellevue University · Iowa Western Community College",
-      tags: ["M.S. Data Science", "B.S. Software Dev", "A.A. CS"],
-      body: [
-        "M.S. Data Science — Bellevue University [Expected Jun 2028]",
-        "B.S. Software Development — Bellevue University [Jun 2025]",
-        "A.A. Computer Programming — Iowa Western [May 2023]",
-        "Consistent Dean's List recognition across all programs",
-      ],
-      links: [{ label: "BELLEVUE U", href: "https://www.bellevue.edu" }],
-    },
-    {
-      title: "Honors & Scholarships",
-      meta: "National Societies · Merit Awards",
-      tags: ["Omega Nu Lambda", "Dean's List", "DREAM", "Gottsch"],
-      body: [
-        "Darrel H. Gottsch Endowed Scholarship recipient",
-        "DREAM Scholarship — merit-based award",
-        "Dean's List — multiple consecutive semesters",
-        "Omega Nu Lambda National Honor Society member",
-      ],
-    },
-  ],
-};
 
 const STACK_BADGES = ["Flutter", "Node.js", "Express", "AWS ECS", "Gemini API", "MySQL", "Redis", "Next.js"];
 
@@ -297,33 +113,6 @@ function NoiseLayer({ opacity = 0.045 }: { opacity?: number }) {
       style={{ opacity, mixBlendMode: "screen", zIndex: 8, borderRadius: "inherit" }}
     />
   );
-}
-
-// ─── Typewriter hook ──────────────────────────────────────────────────────────
-
-function useTypewriter(text: string, speed = 28, startDelay = 0) {
-  const [displayed, setDisplayed] = useState(speed === 0 ? text : "");
-  useEffect(() => {
-    if (speed === 0) {
-      setDisplayed(text);
-      return;
-    }
-    setDisplayed("");
-    let i = 0;
-    let tick: ReturnType<typeof setInterval> | undefined;
-    const t = setTimeout(() => {
-      tick = setInterval(() => {
-        i++;
-        setDisplayed(text.slice(0, i));
-        if (i >= text.length && tick) clearInterval(tick);
-      }, speed);
-    }, startDelay);
-    return () => {
-      clearTimeout(t);
-      if (tick) clearInterval(tick);
-    };
-  }, [text, speed, startDelay]);
-  return displayed;
 }
 
 // ─── Live Clock ───────────────────────────────────────────────────────────────
@@ -479,21 +268,28 @@ function SectionSelect({
   channelTotal,
   onCategoryChange,
   compact = false,
+  pulseGuide = false,
 }: {
   category: string;
   channelIndex: number;
   channelTotal: number;
   onCategoryChange: (id: string) => void;
   compact?: boolean;
+  pulseGuide?: boolean;
 }) {
+  const channels = CONTENT[category] || [];
+  const channelTitle = channels[channelIndex]?.title ?? channels[0]?.title;
+
   return (
     <SectionModeDial
       sections={CATEGORIES}
       activeId={category}
       channelIndex={channelIndex}
       channelTotal={channelTotal}
+      channelTitle={channelTitle}
       onChange={onCategoryChange}
       compact={compact}
+      pulseGuide={pulseGuide}
     />
   );
 }
@@ -573,147 +369,30 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
 
 // ─── Main Content Screen ──────────────────────────────────────────────────────
 
-const screenVariants = {
-  enter:  { opacity: 0, y: 14, filter: "blur(4px) brightness(2)" },
-  center: { opacity: 1, y: 0,  filter: "blur(0px) brightness(1)" },
-  exit:   { opacity: 0, y: -10, filter: "blur(3px) brightness(0.5)" },
-};
-
 function MainScreen({ category, channelIndex, flickering, fontSize, reducedMotion = false }: {
   category: string; channelIndex: number; flickering: boolean; fontSize?: number; reducedMotion?: boolean;
 }) {
   const channels = CONTENT[category] || [];
   const entry = channels[channelIndex] || channels[0];
-  const title = useTypewriter(entry.title, reducedMotion ? 0 : 28, reducedMotion ? 0 : 100);
-  const catObj = CATEGORIES.find(c => c.id === category);
-  const titleSize = fontSize ?? 52;
-  const bodySize = Math.max(15, Math.min(18, titleSize * 0.32));
-  const showFlicker = flickering && !reducedMotion;
+  const catObj = CATEGORIES.find((c) => c.id === category);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{
-      background: "linear-gradient(160deg, #0A0C12 0%, #080A0F 100%)",
-      border: "1px solid #252B3A", borderRadius: 12, position: "relative",
-      boxShadow: "inset 0 1px 0 #ffffff0a, inset 0 0 40px #00000055, 0 12px 40px #00000066",
-    }}>
-      <div className="scanline-overlay" style={{ zIndex: 6 }} />
-      <NoiseLayer opacity={0.05} />
-      {!reducedMotion && <AmberGlitter density={14} showSheen />}
-      <div style={{ borderBottom: "1px solid #252B3A", padding: `${S.sm}px ${S.lg}px`, background: "#0A0B0E", flexShrink: 0, display: "flex", alignItems: "center", gap: S.sm, position: "relative", zIndex: 9 }}>
-        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 8px #F5A00F", animation: reducedMotion ? undefined : "pulse-amber 2s ease-in-out infinite" }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#F5A00F", letterSpacing: "0.2em" }}>TELEMETRY FEED</span>
-        <div style={{ flex: 1 }} />
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B", letterSpacing: "0.12em" }}>
-          SRC:{catObj?.shortLabel} · CH:{String(channelIndex + 1).padStart(2, "0")}
-        </span>
-      </div>
-      <div className="flex-1 relative min-h-0" style={{ zIndex: 7 }}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${category}-${channelIndex}`}
-            variants={reducedMotion ? undefined : screenVariants}
-            initial={reducedMotion ? false : "enter"}
-            animate={showFlicker ? { opacity: [0.2, 0.9, 0.4, 1], filter: ["blur(3px)", "blur(0px)"] } : reducedMotion ? { opacity: 1 } : "center"}
-            exit={reducedMotion ? undefined : "exit"}
-            transition={{ duration: reducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 flex flex-col overflow-y-auto"
-            style={{ padding: `${S.xl}px ${S.xxl}px` }}
-          >
-            <motion.div initial={reducedMotion ? false : { opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 }}
-              style={{ display: "flex", alignItems: "center", gap: S.sm, marginBottom: S.md, flexShrink: 0 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#0A0B0E", background: "#F5A00F", padding: "5px 12px", borderRadius: 3, letterSpacing: "0.18em", fontWeight: 600 }}>
-                CH:{String(channelIndex + 1).padStart(2, "0")}
-              </div>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, #F5A00F44, transparent)" }} />
-            </motion.div>
-
-            <div style={{ position: "relative", marginBottom: S.md, zIndex: 1 }}>
-              {/* Invisible full title reserves height so typewriter doesn't shove content */}
-              <h1
-                aria-hidden
-                style={{
-                  fontFamily: "'Chakra Petch', sans-serif",
-                  fontSize: titleSize,
-                  fontWeight: 700,
-                  letterSpacing: "0.02em",
-                  lineHeight: 1.28,
-                  margin: 0,
-                  padding: 0,
-                  visibility: "hidden",
-                  overflowWrap: "anywhere",
-                  wordBreak: "break-word",
-                }}
-              >
-                {entry.title}
-              </h1>
-              <h1 style={{
-                fontFamily: "'Chakra Petch', sans-serif",
-                fontSize: titleSize,
-                fontWeight: 700,
-                color: "#F0EAD8",
-                letterSpacing: "0.02em",
-                lineHeight: 1.28,
-                textShadow: "0 0 40px #F5A00F14",
-                margin: 0,
-                padding: 0,
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                overflowWrap: "anywhere",
-                wordBreak: "break-word",
-              }}>
-                {reducedMotion ? entry.title : title}
-                {!reducedMotion && (
-                  <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }} style={{ color: "#F5A00F", marginLeft: 3 }}>
-                    {title.length < entry.title.length ? "▊" : ""}
-                  </motion.span>
-                )}
-              </h1>
-            </div>
-
-            <motion.div initial={reducedMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
-              style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: "#94A3B8", letterSpacing: "0.06em", marginBottom: S.md, lineHeight: 1.5, position: "relative", zIndex: 1 }}>
-              {entry.meta}
-            </motion.div>
-
-            <motion.div initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-              style={{ display: "flex", flexWrap: "wrap", gap: S.sm, marginBottom: S.lg, position: "relative", zIndex: 1 }}>
-              {entry.tags.map((tag, i) => (
-                <motion.span key={tag} initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 + i * 0.04, type: "spring", stiffness: 300, damping: 22 }}
-                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, padding: "5px 12px", background: "#11141B", border: "1px solid #F5A00F2A", borderRadius: 4, color: "#C9954A", letterSpacing: "0.05em" }}>
-                  {tag}
-                </motion.span>
-              ))}
-            </motion.div>
-
-            <div style={{ height: 1, background: "linear-gradient(90deg, #F5A00F1A, transparent)", marginBottom: S.md, flexShrink: 0 }} />
-
-            <div style={{ display: "flex", flexDirection: "column", gap: S.md, position: "relative", zIndex: 1 }}>
-              {entry.body.map((line, i) => (
-                <motion.div key={`${category}-${channelIndex}-${i}`} initial={reducedMotion ? false : { opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.08, type: "spring", stiffness: 260, damping: 26 }}
-                  style={{ display: "flex", alignItems: "flex-start", gap: S.md }}>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F5A00F", opacity: 0.5, flexShrink: 0, marginTop: 3, letterSpacing: "0.1em" }}>
-                    {String(i + 1).padStart(2, "0")}›
-                  </span>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: bodySize, color: "#B8B09A", lineHeight: 1.7, letterSpacing: "0.02em" }}>
-                    {line}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-
-            <ActionStrip links={entry.links} reducedMotion={reducedMotion} />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
+    <TelemetryDossier
+      entry={entry}
+      category={category}
+      channelIndex={channelIndex}
+      categoryShort={catObj?.shortLabel}
+      flickering={flickering}
+      fontSize={fontSize}
+      reducedMotion={reducedMotion}
+      noiseLayer={<NoiseLayer opacity={0.05} />}
+    />
   );
 }
 
 // ─── Desktop Layout ───────────────────────────────────────────────────────────
 
-function DesktopLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion }: LayoutProps) {
+function DesktopLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
   const FASTENERS = [-15, 30, 45, 90];
   // True chassis corners on the faceplate lip — clear of status/clock and mode bar
   const FASTENER_POS = [
@@ -771,7 +450,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
         </RecessedWell>
       </div>
       <div style={{ padding: `${S.sm}px ${S.xl}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0, paddingLeft: 44, paddingRight: 44 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} />
       </div>
     </PerspectiveChassis>
   );
@@ -779,7 +458,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
 
 // ─── Tablet Layout ────────────────────────────────────────────────────────────
 
-function TabletLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion }: LayoutProps) {
+function TabletLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
   return (
     <div className="relative flex flex-col" style={{
       width: "100vw", height: "100dvh",
@@ -805,7 +484,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
         </div>
       </div>
       <div style={{ padding: `${S.sm}px ${S.md}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} />
       </div>
     </div>
   );
@@ -813,7 +492,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
 
 // ─── Mobile Layout ────────────────────────────────────────────────────────────
 
-function MobileLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion }: LayoutProps) {
+function MobileLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
   const [showProfile, setShowProfile] = useState(false);
   return (
     <div className="relative flex flex-col" style={{ width: "100vw", height: "100dvh", background: "#0A0B0E", overflow: "hidden" }}>
@@ -869,7 +548,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       </div>
 
       <div style={{ padding: `${S.sm}px ${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact pulseGuide={pulseGuide} />
       </div>
     </div>
   );
@@ -885,6 +564,7 @@ type LayoutProps = {
   goToChannel: (index: number) => void;
   handleCategoryChange: (id: string) => void;
   reducedMotion: boolean;
+  pulseGuide?: boolean;
 };
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
@@ -902,6 +582,7 @@ export default function App() {
   const [flickering, setFlickering] = useState(false);
   const [powered, setPowered] = useState(false);
   const [booted, setBooted] = useState(reducedMotion);
+  const [pulseGuide, setPulseGuide] = useState(false);
   const flickerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const onBootDone = useCallback(() => setBooted(true), []);
@@ -909,6 +590,25 @@ export default function App() {
   useEffect(() => {
     if (!booted) return;
     const t = setTimeout(() => setPowered(true), reducedMotion ? 0 : 80);
+    return () => clearTimeout(t);
+  }, [booted, reducedMotion]);
+
+  useEffect(() => {
+    if (!booted || reducedMotion) return;
+    try {
+      if (localStorage.getItem("rs691-guide-pulse")) return;
+    } catch {
+      return;
+    }
+    setPulseGuide(true);
+    const t = setTimeout(() => {
+      setPulseGuide(false);
+      try {
+        localStorage.setItem("rs691-guide-pulse", "1");
+      } catch {
+        /* ignore quota / private mode */
+      }
+    }, 2200);
     return () => clearTimeout(t);
   }, [booted, reducedMotion]);
 
@@ -992,6 +692,7 @@ export default function App() {
     goToChannel,
     handleCategoryChange,
     reducedMotion,
+    pulseGuide,
   };
 
   return (
