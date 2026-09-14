@@ -48,6 +48,65 @@ function useTypewriter(text: string, speed = 28, startDelay = 0) {
   return out;
 }
 
+const DECODE_GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%&*<>/\\|";
+
+/** Cipher-crack reveal — glyphs churn until each character settles L→R. */
+function useDecodeScramble(
+  text: string,
+  {
+    tickMs = 28,
+    startDelay = 220,
+    charsPerTick = 1.15,
+    reducedMotion = false,
+  }: {
+    tickMs?: number;
+    startDelay?: number;
+    charsPerTick?: number;
+    reducedMotion?: boolean;
+  } = {},
+) {
+  const [out, setOut] = useState(reducedMotion ? text : "");
+
+  useEffect(() => {
+    if (reducedMotion || tickMs <= 0) {
+      setOut(text);
+      return;
+    }
+
+    const scramble = (revealCount: number) =>
+      text
+        .split("")
+        .map((ch, i) => {
+          if (ch === " " || ch === "\n" || ch === "\t") return ch;
+          if (i < revealCount) return ch;
+          return DECODE_GLYPHS[(Math.random() * DECODE_GLYPHS.length) | 0];
+        })
+        .join("");
+
+    setOut(scramble(0));
+    let reveal = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const start = window.setTimeout(() => {
+      interval = setInterval(() => {
+        reveal += charsPerTick;
+        if (reveal >= text.length) {
+          setOut(text);
+          if (interval) clearInterval(interval);
+          return;
+        }
+        setOut(scramble(Math.floor(reveal)));
+      }, tickMs);
+    }, startDelay);
+
+    return () => {
+      window.clearTimeout(start);
+      if (interval) clearInterval(interval);
+    };
+  }, [text, tickMs, startDelay, charsPerTick, reducedMotion]);
+
+  return out;
+}
+
 function SectionLabel({ children }: { children: string }) {
   return (
     <div
@@ -116,6 +175,12 @@ export default function TelemetryDossier({
     reducedMotion ? 0 : 28,
     reducedMotion ? 0 : 100,
   );
+  const summary = useDecodeScramble(entry.summary, {
+    reducedMotion,
+    startDelay: reducedMotion ? 0 : 280,
+    tickMs: 26,
+    charsPerTick: 1.35,
+  });
   const titleSize = Math.min(fontSize, entry.title.length > 28 ? fontSize * 0.88 : fontSize);
   const bodySize = Math.max(14, Math.min(17, titleSize * 0.3));
   const showFlicker = flickering && !reducedMotion;
@@ -251,7 +316,7 @@ export default function TelemetryDossier({
             height: "100%",
             width: "100%",
             originX: 0,
-            scaleX: reducedMotion ? 0 : scrollYProgress,
+            scaleX: scrollYProgress,
             background: "linear-gradient(90deg, #925B03, #F5A00F, #FCD34D)",
             boxShadow: "0 0 8px #F5A00F88",
           }}
@@ -431,6 +496,7 @@ export default function TelemetryDossier({
                 root={scrollRef}
               >
                 <p
+                  aria-label={entry.summary}
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: bodySize,
@@ -440,7 +506,7 @@ export default function TelemetryDossier({
                     margin: 0,
                   }}
                 >
-                  {entry.summary}
+                  {summary}
                 </p>
               </DossierBlock>
 

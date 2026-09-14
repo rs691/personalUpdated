@@ -18,7 +18,11 @@ import { CONTENT } from "@/content";
 const S = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32 } as const;
 
 function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduced(mq.matches);
@@ -269,6 +273,7 @@ function SectionSelect({
   onCategoryChange,
   compact = false,
   pulseGuide = false,
+  reducedMotion = false,
 }: {
   category: string;
   channelIndex: number;
@@ -276,6 +281,7 @@ function SectionSelect({
   onCategoryChange: (id: string) => void;
   compact?: boolean;
   pulseGuide?: boolean;
+  reducedMotion?: boolean;
 }) {
   const channels = CONTENT[category] || [];
   const channelTitle = channels[channelIndex]?.title ?? channels[0]?.title;
@@ -290,6 +296,7 @@ function SectionSelect({
       onChange={onCategoryChange}
       compact={compact}
       pulseGuide={pulseGuide}
+      reducedMotion={reducedMotion}
     />
   );
 }
@@ -305,7 +312,7 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
     }}>
       <NoiseLayer opacity={0.03} />
       <div style={{ borderBottom: "1px solid #252B3A", padding: "8px 14px", background: "#0A0C11", flexShrink: 0, display: "flex", alignItems: "center", gap: 8, position: "relative", zIndex: 2 }}>
-        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 6px #F5A00F", animation: "pulse-amber 2s ease-in-out infinite" }} />
+        <div className="led-pulse" style={{ width: 6, height: 6, borderRadius: "50%", background: "#F5A00F", boxShadow: "0 0 6px #F5A00F" }} />
         <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: "#F5A00F", letterSpacing: "0.18em" }}>SYSTEM PROFILE</span>
       </div>
       <div className="flex-1 overflow-y-auto" style={{ padding: compact ? "12px 12px" : "16px", position: "relative", zIndex: 2 }}>
@@ -450,7 +457,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
         </RecessedWell>
       </div>
       <div style={{ padding: `${S.sm}px ${S.xl}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0, paddingLeft: 44, paddingRight: 44 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
       </div>
     </PerspectiveChassis>
   );
@@ -484,7 +491,7 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
         </div>
       </div>
       <div style={{ padding: `${S.sm}px ${S.md}px ${S.md}px`, borderTop: "1px solid #0E1016", position: "relative", zIndex: 5, flexShrink: 0 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
       </div>
     </div>
   );
@@ -523,10 +530,14 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       <AnimatePresence>
         {showProfile && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
+            initial={reducedMotion ? false : { height: 0, opacity: 0 }}
             animate={{ height: 240, opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={
+              reducedMotion
+                ? { duration: 0 }
+                : { type: "spring", stiffness: 300, damping: 30 }
+            }
             style={{ overflow: "hidden", flexShrink: 0, position: "relative", zIndex: 8, borderBottom: "1px solid #252B3A" }}
           >
             <ProfilePanel compact />
@@ -548,7 +559,7 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       </div>
 
       <div style={{ padding: `${S.sm}px ${S.sm}px ${S.md}px`, borderTop: "1px solid #0E1016", flexShrink: 0, position: "relative", zIndex: 5 }}>
-        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact pulseGuide={pulseGuide} />
+        <SectionSelect category={category} channelIndex={channelIndex} channelTotal={total} onCategoryChange={handleCategoryChange} compact pulseGuide={pulseGuide} reducedMotion={reducedMotion} />
       </div>
     </div>
   );

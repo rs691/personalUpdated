@@ -21,6 +21,7 @@ type SectionModeDialProps = {
   compact?: boolean;
   /** One-shot amber pulse on OPERATOR GUIDE after first boot */
   pulseGuide?: boolean;
+  reducedMotion?: boolean;
 };
 
 const GUIDE_LINES = [
@@ -175,6 +176,7 @@ export default function SectionModeDial({
   channelTitle,
   compact = false,
   pulseGuide = false,
+  reducedMotion = false,
 }: SectionModeDialProps) {
   const index = Math.max(
     0,
@@ -259,10 +261,10 @@ export default function SectionModeDial({
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${active?.id ?? "none"}-${channelIndex}`}
-                initial={{ opacity: 0, y: 6 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.18 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: -4 }}
+                transition={{ duration: reducedMotion ? 0 : 0.18 }}
               >
                 <div
                   style={{
