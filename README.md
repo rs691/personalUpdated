@@ -2,7 +2,15 @@
 
 Interactive hardware-console portfolio for **Robert Stewart** — amber/titanium CRT telemetry, rotary mode + channel dials, and scrollable résumé dossiers.
 
-**Live:** [https://rs691.github.io/personalUpdated/](https://rs691.github.io/personalUpdated/)
+**Live:** [https://rs691.github.io/personalUpdated/](https://rs691.github.io/personalUpdated/)  
+**Profile:** [github.com/rs691](https://github.com/rs691) · **Resume:** [PDF](https://rs691.github.io/personalUpdated/images/Resume.pdf)
+
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111827)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-222222?logo=github&logoColor=white)](https://github.com/rs691/personalUpdated/actions/workflows/deploy-pages.yml)
+[![Build](https://github.com/rs691/personalUpdated/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/rs691/personalUpdated/actions/workflows/deploy-pages.yml)
 
 ## Stack
 
@@ -47,7 +55,7 @@ Desktop deck tilts slightly with the pointer; the CRT amber sheen responds subtl
 | --- | --- |
 | `src/App.tsx` | Layouts (desktop / tablet / mobile), routing via hash `#section/channel` |
 | `src/content.ts` | Dossier content (`summary` / `body` / `detail` / links) + `RESUME_HREF` |
-| `src/components/TelemetryDossier.tsx` | CRT screen: sticky head, scroll progress, section reveals |
+| `src/components/TelemetryDossier.tsx` | CRT screen: sticky head, scroll progress, section reveals, summary decode |
 | `src/components/SectionModeDial.tsx` | MODE SELECT · dial · OPERATOR GUIDE triad |
 | `src/components/PerspectiveChassis.tsx` | Desktop chassis + pointer tilt context |
 | `src/components/RotaryDial.tsx` / `ChannelGauge.tsx` | Channel / mode hardware controls |
@@ -57,6 +65,8 @@ Desktop deck tilts slightly with the pointer; the CRT amber sheen responds subtl
 ## Deploy
 
 GitHub Pages via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). Production URL uses `base: '/personalUpdated/'` in [`vite.config.ts`](vite.config.ts).
+
+Push to `main` to rebuild and publish automatically.
 
 ## Notes
 
