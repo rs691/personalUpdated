@@ -16,6 +16,17 @@ type BootSequenceProps = {
 export default function BootSequence({ reducedMotion = false, onDone }: BootSequenceProps) {
   const [line, setLine] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [centerCopy, setCenterCopy] = useState(
+    () => (typeof window !== "undefined" ? window.innerWidth < 1024 : true),
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setCenterCopy(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     if (reducedMotion) {
@@ -58,7 +69,12 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
             fontFamily: "'JetBrains Mono', monospace",
           }}
         >
-          <div style={{ width: "min(420px, 86vw)" }}>
+          <div
+            style={{
+              width: "min(420px, 86vw)",
+              textAlign: centerCopy ? "center" : "left",
+            }}
+          >
             <div
               style={{
                 fontFamily: "'Chakra Petch', sans-serif",
@@ -72,12 +88,19 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
             >
               RS-691
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                alignItems: centerCopy ? "center" : "stretch",
+              }}
+            >
               {BOOT_LINES.slice(0, line + 1).map((text, idx) => (
                 <motion.div
                   key={text}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: idx === line ? 1 : 0.45, x: 0 }}
+                  initial={{ opacity: 0, x: centerCopy ? 0 : -8, y: centerCopy ? 6 : 0 }}
+                  animate={{ opacity: idx === line ? 1 : 0.45, x: 0, y: 0 }}
                   style={{
                     fontSize: 12,
                     color: idx === line ? "#F5A00F" : "#525F7B",

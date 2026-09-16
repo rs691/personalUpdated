@@ -13,7 +13,17 @@ import SectionModeDial from "@/components/SectionModeDial";
 import PerspectiveChassis, { RecessedWell } from "@/components/PerspectiveChassis";
 import TelemetryDossier from "@/components/TelemetryDossier";
 import FabricationStamp from "@/components/FabricationStamp";
+import TouchConsole from "@/components/TouchConsole";
+import TouchKeycapDial from "@/components/TouchKeycapDial";
 import { CONTENT } from "@/content";
+
+/**
+ * Mobile/tablet shell switcher — flip to try layouts without losing others.
+ * - "keycap-dial" → 4 section keycaps + channel dial + LED lamps (current)
+ * - "hold-dock"   → frosted dock with hold pads + animated chevrons
+ * - "off"         → legacy stacked tuner / mode dial
+ */
+const TOUCH_SHELL: "keycap-dial" | "hold-dock" | "off" = "keycap-dial";
 
 /** Consistent spacing rhythm (px) */
 const S = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32 } as const;
@@ -467,9 +477,49 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
   );
 }
 
-// ─── Tablet Layout ────────────────────────────────────────────────────────────
+// ─── Touch console (mobile + tablet) — set TOUCH_SHELL to try layouts ─────────
 
-function TabletLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
+function TouchLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
+  const channels = CONTENT[category] || [];
+  const channelTitle = channels[channelIndex]?.title ?? channels[0]?.title;
+  const shared = {
+    sections: CATEGORIES,
+    category,
+    channelIndex,
+    total,
+    channelTitle,
+    reducedMotion,
+    pulseGuide,
+    onCategoryChange: handleCategoryChange,
+    onChannelSelect: goToChannel,
+    clock: <LiveClock />,
+    profile: <ProfilePanel compact />,
+    screen: (
+      <MainScreen
+        category={category}
+        channelIndex={channelIndex}
+        flickering={flickering}
+        fontSize={28}
+        reducedMotion={reducedMotion}
+      />
+    ),
+    stamp: <FabricationStamp compact />,
+  };
+
+  if (TOUCH_SHELL === "keycap-dial") {
+    return <TouchKeycapDial {...shared} />;
+  }
+  return <TouchConsole {...shared} flickering={flickering} />;
+}
+
+function renderTouchShell(props: LayoutProps) {
+  if (TOUCH_SHELL === "off") return null;
+  return <TouchLayout {...props} />;
+}
+
+// ─── Tablet Layout (legacy) ───────────────────────────────────────────────────
+
+function TabletLayoutLegacy({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
   return (
     <div className="relative flex flex-col" style={{
       width: "100vw", height: "100dvh",
@@ -502,9 +552,13 @@ function TabletLayout({ category, channelIndex, flickering, total, goToChannel, 
   );
 }
 
-// ─── Mobile Layout ────────────────────────────────────────────────────────────
+function TabletLayout(props: LayoutProps) {
+  return renderTouchShell(props) ?? <TabletLayoutLegacy {...props} />;
+}
 
-function MobileLayout({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
+// ─── Mobile Layout (legacy) ───────────────────────────────────────────────────
+
+function MobileLayoutLegacy({ category, channelIndex, flickering, total, goToChannel, handleCategoryChange, reducedMotion, pulseGuide }: LayoutProps) {
   const [showProfile, setShowProfile] = useState(false);
   return (
     <div className="relative flex flex-col" style={{ width: "100vw", height: "100dvh", background: "#0A0B0E", overflow: "hidden" }}>
@@ -569,6 +623,10 @@ function MobileLayout({ category, channelIndex, flickering, total, goToChannel, 
       </div>
     </div>
   );
+}
+
+function MobileLayout(props: LayoutProps) {
+  return renderTouchShell(props) ?? <MobileLayoutLegacy {...props} />;
 }
 
 // ─── Layout prop type ─────────────────────────────────────────────────────────

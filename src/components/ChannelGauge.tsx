@@ -14,6 +14,8 @@ type ChannelGaugeProps = {
   onStep: (direction: 1 | -1) => void;
   onSelect: (index: number) => void;
   compact?: boolean;
+  /** Drop max-width so the gauge fills its parent (mobile dock). */
+  stretch?: boolean;
   reducedMotion?: boolean;
 };
 
@@ -27,6 +29,7 @@ export default function ChannelGauge({
   onStep,
   onSelect,
   compact = false,
+  stretch = false,
   reducedMotion = false,
 }: ChannelGaugeProps) {
   const h = compact ? 10 : 12;
@@ -41,7 +44,7 @@ export default function ChannelGauge({
         alignItems: "center",
         gap: compact ? 8 : 10,
         width: "100%",
-        maxWidth: compact ? 320 : 240,
+        maxWidth: stretch ? "none" : compact ? 320 : 240,
       }}
     >
       <motion.button

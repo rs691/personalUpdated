@@ -11,9 +11,11 @@ permissions:
   pages: write
   id-token: write
 
+# One deployment at a time; do not cancel an in-flight run (that drops its
+# github-pages artifact and leaves deploy unable to find it on re-run).
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -43,7 +45,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
+          # Default is 1 day; keep longer so "Re-run failed jobs" on deploy still works.
+          retention-days: 7
   deploy:
     needs: build
     runs-on: ubuntu-latest

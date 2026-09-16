@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   AnimatePresence,
   motion,
+  useInView,
   useScroll,
   useTransform,
   type MotionValue,
@@ -23,9 +24,18 @@ type TelemetryDossierProps = {
   noiseLayer?: ReactNode;
 };
 
-function useTypewriter(text: string, speed = 28, startDelay = 0) {
+function useTypewriter(
+  text: string,
+  speed = 28,
+  startDelay = 0,
+  enabled = true,
+) {
   const [out, setOut] = useState("");
   useEffect(() => {
+    if (!enabled) {
+      setOut("");
+      return;
+    }
     setOut("");
     if (speed <= 0) {
       setOut(text);
@@ -44,67 +54,56 @@ function useTypewriter(text: string, speed = 28, startDelay = 0) {
       window.clearTimeout(start);
       if (interval) clearInterval(interval);
     };
-  }, [text, speed, startDelay]);
+  }, [text, speed, startDelay, enabled]);
   return out;
 }
 
-const DECODE_GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%&*<>/\\|";
+/** Types in when scrolled into view — incoming transmission lines. */
+function TransmissionLine({
+  text,
+  reducedMotion,
+  scrollRoot,
+  speed = 20,
+  startDelay = 0,
+  style,
+}: {
+  text: string;
+  reducedMotion: boolean;
+  scrollRoot: React.RefObject<Element | null>;
+  speed?: number;
+  startDelay?: number;
+  style?: React.CSSProperties;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, {
+    root: scrollRoot,
+    amount: 0.15,
+    once: true,
+  });
+  const active = reducedMotion || inView;
+  const out = useTypewriter(
+    text,
+    reducedMotion ? 0 : speed,
+    startDelay,
+    active,
+  );
+  const showCursor =
+    !reducedMotion && active && out.length > 0 && out.length < text.length;
 
-/** Cipher-crack reveal — glyphs churn until each character settles L→R. */
-function useDecodeScramble(
-  text: string,
-  {
-    tickMs = 28,
-    startDelay = 220,
-    charsPerTick = 1.15,
-    reducedMotion = false,
-  }: {
-    tickMs?: number;
-    startDelay?: number;
-    charsPerTick?: number;
-    reducedMotion?: boolean;
-  } = {},
-) {
-  const [out, setOut] = useState(reducedMotion ? text : "");
-
-  useEffect(() => {
-    if (reducedMotion || tickMs <= 0) {
-      setOut(text);
-      return;
-    }
-
-    const scramble = (revealCount: number) =>
-      text
-        .split("")
-        .map((ch, i) => {
-          if (ch === " " || ch === "\n" || ch === "\t") return ch;
-          if (i < revealCount) return ch;
-          return DECODE_GLYPHS[(Math.random() * DECODE_GLYPHS.length) | 0];
-        })
-        .join("");
-
-    setOut(scramble(0));
-    let reveal = 0;
-    let interval: ReturnType<typeof setInterval> | undefined;
-    const start = window.setTimeout(() => {
-      interval = setInterval(() => {
-        reveal += charsPerTick;
-        if (reveal >= text.length) {
-          setOut(text);
-          if (interval) clearInterval(interval);
-          return;
-        }
-        setOut(scramble(Math.floor(reveal)));
-      }, tickMs);
-    }, startDelay);
-
-    return () => {
-      window.clearTimeout(start);
-      if (interval) clearInterval(interval);
-    };
-  }, [text, tickMs, startDelay, charsPerTick, reducedMotion]);
-
-  return out;
+  return (
+    <span ref={ref} style={style}>
+      {reducedMotion ? text : out}
+      {showCursor && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.45, repeat: Infinity, repeatType: "reverse" }}
+          style={{ color: "#F5A00F", marginLeft: 2 }}
+        >
+          ▊
+        </motion.span>
+      )}
+    </span>
+  );
 }
 
 function SectionLabel({ children }: { children: string }) {
@@ -170,17 +169,28 @@ export default function TelemetryDossier({
   noiseLayer,
 }: TelemetryDossierProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const titleSpeed = reducedMotion ? 0 : 28;
+  const titleDelay = reducedMotion ? 0 : 100;
   const title = useTypewriter(
     entry.title,
-    reducedMotion ? 0 : 28,
-    reducedMotion ? 0 : 100,
+    titleSpeed,
+    titleDelay,
+    true,
   );
-  const summary = useDecodeScramble(entry.summary, {
-    reducedMotion,
-    startDelay: reducedMotion ? 0 : 280,
-    tickMs: 26,
-    charsPerTick: 1.35,
-  });
+  /** SUMMARY follows title so the feed reads top-to-bottom like a live decode. */
+  const summaryStartDelay = reducedMotion
+    ? 0
+    : titleDelay + entry.title.length * titleSpeed + 120;
+  const summary = useTypewriter(
+    entry.summary,
+    reducedMotion ? 0 : 18,
+    summaryStartDelay,
+    true,
+  );
+  const summaryTyping =
+    !reducedMotion &&
+    summary.length > 0 &&
+    summary.length < entry.summary.length;
   const titleSize = Math.min(fontSize, entry.title.length > 28 ? fontSize * 0.88 : fontSize);
   const bodySize = Math.max(14, Math.min(17, titleSize * 0.3));
   const showFlicker = flickering && !reducedMotion;
@@ -505,7 +515,20 @@ export default function TelemetryDossier({
                     margin: 0,
                   }}
                 >
-                  {summary}
+                  {reducedMotion ? entry.summary : summary}
+                  {summaryTyping && (
+                    <motion.span
+                      animate={{ opacity: [1, 0] }}
+                      transition={{
+                        duration: 0.45,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
+                      style={{ color: "#F5A00F", marginLeft: 2 }}
+                    >
+                      ▊
+                    </motion.span>
+                  )}
                 </p>
               </DossierBlock>
 
@@ -522,25 +545,8 @@ export default function TelemetryDossier({
                   }}
                 >
                   {entry.body.map((line, i) => (
-                    <motion.div
+                    <div
                       key={`${category}-${channelIndex}-b-${i}`}
-                      initial={reducedMotion ? false : { opacity: 0, x: -14 }}
-                      whileInView={
-                        reducedMotion ? undefined : { opacity: 1, x: 0 }
-                      }
-                      viewport={
-                        reducedMotion
-                          ? undefined
-                          : {
-                              root: scrollRef as React.RefObject<Element | null>,
-                              amount: 0.4,
-                              once: true,
-                            }
-                      }
-                      transition={{
-                        delay: reducedMotion ? 0 : i * 0.05,
-                        duration: 0.3,
-                      }}
                       style={{
                         display: "flex",
                         alignItems: "flex-start",
@@ -560,7 +566,12 @@ export default function TelemetryDossier({
                       >
                         {String(i + 1).padStart(2, "0")}›
                       </span>
-                      <span
+                      <TransmissionLine
+                        text={line}
+                        reducedMotion={reducedMotion}
+                        scrollRoot={scrollRef}
+                        speed={18}
+                        startDelay={i * 90}
                         style={{
                           fontFamily: "'JetBrains Mono', monospace",
                           fontSize: bodySize,
@@ -568,10 +579,8 @@ export default function TelemetryDossier({
                           lineHeight: 1.7,
                           letterSpacing: "0.02em",
                         }}
-                      >
-                        {line}
-                      </span>
-                    </motion.div>
+                      />
+                    </div>
                   ))}
                 </div>
               </DossierBlock>
@@ -595,27 +604,8 @@ export default function TelemetryDossier({
                     }}
                   >
                     {entry.detail.map((line, i) => (
-                      <motion.div
+                      <div
                         key={`${category}-${channelIndex}-d-${i}`}
-                        initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-                        whileInView={
-                          reducedMotion ? undefined : { opacity: 1, y: 0 }
-                        }
-                        viewport={
-                          reducedMotion
-                            ? undefined
-                            : {
-                                root: scrollRef as React.RefObject<
-                                  Element | null
-                                >,
-                                amount: 0.35,
-                                once: true,
-                              }
-                        }
-                        transition={{
-                          delay: reducedMotion ? 0 : i * 0.04,
-                          duration: 0.28,
-                        }}
                         style={{
                           display: "flex",
                           alignItems: "flex-start",
@@ -633,7 +623,12 @@ export default function TelemetryDossier({
                         >
                           ▸
                         </span>
-                        <span
+                        <TransmissionLine
+                          text={line}
+                          reducedMotion={reducedMotion}
+                          scrollRoot={scrollRef}
+                          speed={16}
+                          startDelay={i * 70}
                           style={{
                             fontFamily: "'JetBrains Mono', monospace",
                             fontSize: Math.max(13, bodySize - 1),
@@ -641,10 +636,8 @@ export default function TelemetryDossier({
                             lineHeight: 1.65,
                             letterSpacing: "0.02em",
                           }}
-                        >
-                          {line}
-                        </span>
-                      </motion.div>
+                        />
+                      </div>
                     ))}
                   </div>
                 </DossierBlock>
