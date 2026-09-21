@@ -201,6 +201,7 @@ export default function TelemetryDossier({
   const sheenY = useTransform(scrollYProgress, [0, 1], [0, 18]);
   const gridY = useTransform(scrollYProgress, [0, 1], [0, -10]);
   const endCueOpacity = useTransform(scrollYProgress, [0.82, 1], [0, 1]);
+  const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.08, 0.2], [1, 0.6, 0]);
 
   const [canScroll, setCanScroll] = useState(false);
 
@@ -449,29 +450,55 @@ export default function TelemetryDossier({
 
               <div
                 style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 8,
+                  position: "relative",
                   marginBottom: S.lg,
                 }}
               >
-                {entry.tags.map((tag) => (
-                  <span
-                    key={tag}
+                <div
+                  className="crt-scroll"
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    overflowX: "auto",
+                    paddingBottom: 4,
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  }}
+                >
+                  {entry.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: 11,
+                        padding: "4px 10px",
+                        background: "#11141B",
+                        border: "1px solid #F5A00F2A",
+                        borderRadius: 4,
+                        color: "#C9954A",
+                        letterSpacing: "0.05em",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                {entry.tags.length > 5 && (
+                  <div
+                    aria-hidden="true"
                     style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: 11,
-                      padding: "4px 10px",
-                      background: "#11141B",
-                      border: "1px solid #F5A00F2A",
-                      borderRadius: 4,
-                      color: "#C9954A",
-                      letterSpacing: "0.05em",
+                      position: "absolute",
+                      right: 0,
+                      top: 0,
+                      bottom: 4,
+                      width: 32,
+                      background: "linear-gradient(90deg, transparent, #080A0F)",
+                      pointerEvents: "none",
                     }}
-                  >
-                    {tag}
-                  </span>
-                ))}
+                  />
+                )}
               </div>
               <DossierBlock
                 label="SUMMARY"
@@ -632,6 +659,45 @@ export default function TelemetryDossier({
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {canScroll && (
+          <motion.div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 56,
+              pointerEvents: "none",
+              zIndex: 8,
+              background: "linear-gradient(180deg, transparent 0%, #080A0Fdd 50%, #080A0F 100%)",
+              opacity: reducedMotion ? 1 : scrollHintOpacity,
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "center",
+              paddingBottom: 8,
+            }}
+          >
+            <motion.div
+              animate={reducedMotion ? undefined : { y: [0, 4, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: "#F5A00F",
+                letterSpacing: "0.14em",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span style={{ opacity: 0.6 }}>▾</span>
+              SCROLL FOR MORE
+              <span style={{ opacity: 0.6 }}>▾</span>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

@@ -369,10 +369,10 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
         {!compact && (
           <>
             <div style={{ height: 1, background: "#252B3A", marginBottom: 12 }} />
-            <div style={{ background: "#06080B", border: "1px solid #1A1D24", borderRadius: 5, padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
+            <div style={{ background: "#06080B", border: "1px solid #1A1D24", borderRadius: 5, padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 10, lineHeight: 1.7, marginBottom: 12, overflow: "hidden" }}>
               <div style={{ color: "#3A4050" }}>{"// context"}</div>
-              {[["currentRole",'"NE Innovation Labs"'],["degree",'"M.S. Data Science"'],["cloud",'"AWS ECS Fargate"'],["ai",'"Gemini Multi-Agent"'],["isolation",'"JWT_CLAIM_RLS"']].map(([k, v]) => (
-                <div key={k}><span style={{ color: "#7A8AAA" }}>{k}</span><span style={{ color: "#3A4058" }}>: </span><span style={{ color: "#7AAA68" }}>{v}</span></div>
+              {[["role",'"NE Innovation Labs"'],["deg",'"M.S. Data Science"'],["infra",'"AWS ECS Fargate"'],["ai",'"Gemini Multi-Agent"'],["auth",'"JWT_CLAIM_RLS"']].map(([k, v]) => (
+                <div key={k} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}><span style={{ color: "#7A8AAA" }}>{k}</span><span style={{ color: "#3A4058" }}>: </span><span style={{ color: "#C9954A" }}>{v}</span></div>
               ))}
             </div>
             <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#525F7B", letterSpacing: "0.15em", marginBottom: 8 }}>PRIMARY STACK</div>
@@ -451,7 +451,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
           <ProfilePanel />
         </RecessedWell>
         <RecessedWell className="flex-1 min-w-0">
-          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={34} reducedMotion={reducedMotion} />
+          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={38} reducedMotion={reducedMotion} />
         </RecessedWell>
         <RecessedWell style={{ width: 248, flexShrink: 0, minHeight: 0 }} overflow="hidden">
           <div className="flex flex-col items-center justify-center" style={{
@@ -502,7 +502,7 @@ function TouchLayout({ category, channelIndex, flickering, total, goToChannel, h
         category={category}
         channelIndex={channelIndex}
         flickering={flickering}
-        fontSize={28}
+        fontSize={30}
         reducedMotion={reducedMotion}
       />
     ),
@@ -533,7 +533,7 @@ function TabletLayoutLegacy({ category, channelIndex, flickering, total, goToCha
       <StatusBar category={category} channelIndex={channelIndex} total={total} compact />
       <div className="flex flex-1" style={{ gap: S.md, padding: S.md, paddingBottom: S.sm, position: "relative", zIndex: 5, minHeight: 0 }}>
         <div className="flex-1 min-w-0">
-          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={30} reducedMotion={reducedMotion} />
+          <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={34} reducedMotion={reducedMotion} />
         </div>
         <div className="flex flex-col items-center justify-center" style={{
           width: 220, flexShrink: 0, gap: S.sm, minHeight: 0, overflow: "hidden",
@@ -608,7 +608,7 @@ function MobileLayoutLegacy({ category, channelIndex, flickering, total, goToCha
       </AnimatePresence>
 
       <div className="flex-1" style={{ padding: S.sm, paddingBottom: S.xs, minHeight: 0, position: "relative", zIndex: 5 }}>
-        <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={28} reducedMotion={reducedMotion} />
+        <MainScreen category={category} channelIndex={channelIndex} flickering={flickering} fontSize={30} reducedMotion={reducedMotion} />
       </div>
 
       <div style={{

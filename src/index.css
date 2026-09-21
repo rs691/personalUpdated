@@ -206,6 +206,10 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: #925B03 #0A0B0E;
 }
+
+.tags-row::-webkit-scrollbar {
+  display: none;
+}
 .crt-scroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -226,8 +230,8 @@ html, body {
 }
 
 @keyframes chassis-breathe {
-  0%, 100% { box-shadow: 0 0 80px #F5A00F0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
-  50% { box-shadow: 0 0 120px #F5A00F1a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
+  0%, 100% { box-shadow: 0 0 60px #F5A00F08, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
+  50% { box-shadow: 0 0 140px #F5A00F28, 0 0 60px #F5A00F12, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
 }
 
 .chassis-breathe {
