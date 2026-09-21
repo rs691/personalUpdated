@@ -82,7 +82,7 @@ export default function TickChannelNumber({
         style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: Math.max(8, 9 * scale),
-          color: "#525F7B",
+          color: "#6B7A96",
           letterSpacing: "0.22em",
         }}
       >

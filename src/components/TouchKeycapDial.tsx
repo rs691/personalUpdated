@@ -89,11 +89,11 @@ function SectionKeycap({
         ...(active ? keycapFaceActive : null),
       }}
     >
-      <Icon size={16} strokeWidth={active ? 2.35 : 2} />
+      <Icon size={18} strokeWidth={active ? 2.35 : 2} />
       <span
         style={{
           fontFamily: "'Chakra Petch', sans-serif",
-          fontSize: 8,
+          fontSize: 9,
           fontWeight: 700,
           letterSpacing: "0.06em",
           lineHeight: 1,
@@ -148,7 +148,7 @@ export default function TouchKeycapDial({
         overflow: "hidden",
       }}
     >
-      <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
+      <div aria-hidden="true" className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
 
       <div
         style={{

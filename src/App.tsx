@@ -95,37 +95,40 @@ function writeHash(category: string, channelIndex: number) {
 
 // ─── Noise Layer ──────────────────────────────────────────────────────────────
 
+let _noiseUrl: string | null = null;
+function getNoiseTextureUrl(): string {
+  if (_noiseUrl) return _noiseUrl;
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const img = ctx.createImageData(size, size);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = (Math.random() * 255) | 0;
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  _noiseUrl = canvas.toDataURL("image/png");
+  return _noiseUrl;
+}
+
 function NoiseLayer({ opacity = 0.045 }: { opacity?: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    canvas.width = 256;
-    canvas.height = 256;
-    let rafId: number;
-    let last = 0;
-    const render = (now: number) => {
-      rafId = requestAnimationFrame(render);
-      if (now - last < 1000 / 14) return;
-      last = now;
-      const img = ctx.createImageData(256, 256);
-      for (let i = 0; i < img.data.length; i += 4) {
-        const v = (Math.random() * 255) | 0;
-        img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
-        img.data[i + 3] = 255;
-      }
-      ctx.putImageData(img, 0, 0);
-    };
-    rafId = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(rafId);
-  }, []);
+  const url = typeof document !== "undefined" ? getNoiseTextureUrl() : null;
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity, mixBlendMode: "screen", zIndex: 8, borderRadius: "inherit" }}
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 w-full h-full pointer-events-none noise-drift"
+      style={{
+        opacity,
+        mixBlendMode: "screen",
+        zIndex: 8,
+        borderRadius: "inherit",
+        backgroundImage: url ? `url(${url})` : undefined,
+        backgroundRepeat: "repeat",
+        backgroundSize: "256px 256px",
+      }}
     />
   );
 }
@@ -173,7 +176,7 @@ function StatusBar({ category, channelIndex, total, compact = false }: { categor
           {compact ? cat?.shortLabel : cat?.label}
         </span>
       </div>
-      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#525F7B", letterSpacing: "0.12em" }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: compact ? 9 : 10, color: "#6B7A96", letterSpacing: "0.12em" }}>
         {String(channelIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
       </span>
       <div style={{ flex: 1 }} />
@@ -330,7 +333,7 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
         <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: compact ? 20 : 24, fontWeight: 700, color: "#F5A00F", letterSpacing: "0.06em", lineHeight: 1.1, textShadow: "0 0 24px #F5A00F44", marginBottom: 4, whiteSpace: "pre-line" }}>
           {compact ? "ROBERT STEWART" : "ROBERT\nSTEWART"}
         </div>
-        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 11, color: "#525F7B", letterSpacing: "0.14em", marginBottom: 14 }}>
+        <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 11, color: "#6B7A96", letterSpacing: "0.14em", marginBottom: 14 }}>
           FULL-STACK SOFTWARE ENGINEER
         </div>
         <div style={{ height: 1, background: "linear-gradient(90deg, #F5A00F22, transparent)", marginBottom: 12 }} />
@@ -339,7 +342,7 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
             const inner = (
               <>
                 <Icon size={12} style={{ color: "#F5A00F", opacity: 0.55, flexShrink: 0 }} />
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: href ? "#8A9AB0" : "#525F7B", lineHeight: 1.3, wordBreak: "break-all", textDecoration: href ? "underline" : "none", textUnderlineOffset: 3 }}>{text}</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: href ? "#95A8C0" : "#6B7A96", lineHeight: 1.3, wordBreak: "break-all", textDecoration: href ? "underline" : "none", textUnderlineOffset: 3 }}>{text}</span>
               </>
             );
             if (href) {
@@ -369,13 +372,13 @@ function ProfilePanel({ compact = false }: { compact?: boolean }) {
             <div style={{ background: "#06080B", border: "1px solid #1A1D24", borderRadius: 5, padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
               <div style={{ color: "#3A4050" }}>{"// context"}</div>
               {[["currentRole",'"NE Innovation Labs"'],["degree",'"M.S. Data Science"'],["cloud",'"AWS ECS Fargate"'],["ai",'"Gemini Multi-Agent"'],["isolation",'"JWT_CLAIM_RLS"']].map(([k, v]) => (
-                <div key={k}><span style={{ color: "#6A7A9A" }}>{k}</span><span style={{ color: "#2A3040" }}>: </span><span style={{ color: "#6A9058" }}>{v}</span></div>
+                <div key={k}><span style={{ color: "#7A8AAA" }}>{k}</span><span style={{ color: "#3A4058" }}>: </span><span style={{ color: "#7AAA68" }}>{v}</span></div>
               ))}
             </div>
             <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: "#525F7B", letterSpacing: "0.15em", marginBottom: 8 }}>PRIMARY STACK</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {STACK_BADGES.map(b => (
-                <span key={b} style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, padding: "4px 8px", background: "#11141B", border: "1px solid #252B3A", borderRadius: 3, color: "#525F7B" }}>{b}</span>
+                <span key={b} style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, padding: "4px 8px", background: "#11141B", border: "1px solid #252B3A", borderRadius: 3, color: "#6B7A96" }}>{b}</span>
               ))}
             </div>
           </>
@@ -436,7 +439,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
         flexDirection: "column",
       }}
     >
-      <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
+      <div aria-hidden="true" className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
       <CircuitTraces />
       {!reducedMotion && <AmberGlitter density={10} />}
       {FASTENERS.map((rot, i) => (
@@ -462,7 +465,7 @@ function DesktopLayout({ category, channelIndex, flickering, total, goToChannel,
             overflow: "hidden",
           }}>
             <NoiseLayer opacity={0.03} />
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#525F7B", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#6B7A96", letterSpacing: "0.22em", position: "relative", zIndex: 2 }}>TUNER DECK</div>
             <div style={{ position: "relative", zIndex: 2, width: "100%", display: "flex", justifyContent: "center" }}>
               <ChannelTuner channelIndex={channelIndex} total={total} onSelect={goToChannel} reducedMotion={reducedMotion} />
             </div>
@@ -525,7 +528,7 @@ function TabletLayoutLegacy({ category, channelIndex, flickering, total, goToCha
       width: "100vw", height: "100dvh",
       background: "#0A0B0E", position: "relative", overflow: "hidden",
     }}>
-      <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
+      <div aria-hidden="true" className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
       {!reducedMotion && <AmberGlitter density={8} />}
       <StatusBar category={category} channelIndex={channelIndex} total={total} compact />
       <div className="flex flex-1" style={{ gap: S.md, padding: S.md, paddingBottom: S.sm, position: "relative", zIndex: 5, minHeight: 0 }}>
@@ -562,7 +565,7 @@ function MobileLayoutLegacy({ category, channelIndex, flickering, total, goToCha
   const [showProfile, setShowProfile] = useState(false);
   return (
     <div className="relative flex flex-col" style={{ width: "100vw", height: "100dvh", background: "#0A0B0E", overflow: "hidden" }}>
-      <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
+      <div aria-hidden="true" className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
 
       <div style={{ display: "flex", alignItems: "center", height: 40, padding: "0 12px", borderBottom: "1px solid #252B3A", background: "#11141B", flexShrink: 0, gap: 8, position: "relative", zIndex: 10 }}>
         <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontSize: 10, fontWeight: 700, color: "#525F7B", letterSpacing: "0.3em" }}>RS-691</div>

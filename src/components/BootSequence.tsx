@@ -8,14 +8,35 @@ const BOOT_LINES = [
   "PROFILE LINKED · READY",
 ];
 
+const BOOT_STORAGE_KEY = "rs691-booted";
+const LINE_INTERVAL_MS = 340;
+const HOLD_AFTER_LAST_MS = 360;
+
 type BootSequenceProps = {
   reducedMotion?: boolean;
   onDone: () => void;
 };
 
+function hasBootedBefore(): boolean {
+  try {
+    return sessionStorage.getItem(BOOT_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markBooted() {
+  try {
+    sessionStorage.setItem(BOOT_STORAGE_KEY, "1");
+  } catch {
+    /* private mode */
+  }
+}
+
 export default function BootSequence({ reducedMotion = false, onDone }: BootSequenceProps) {
+  const skipBoot = reducedMotion || hasBootedBefore();
   const [line, setLine] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(!skipBoot);
   const [centerCopy, setCenterCopy] = useState(
     () => (typeof window !== "undefined" ? window.innerWidth < 1024 : true),
   );
@@ -29,7 +50,7 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) {
+    if (skipBoot) {
       onDone();
       setVisible(false);
       return;
@@ -41,14 +62,15 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
         clearInterval(id);
         setTimeout(() => {
           setVisible(false);
+          markBooted();
           onDone();
-        }, 420);
+        }, HOLD_AFTER_LAST_MS);
       } else {
         setLine(i);
       }
-    }, 380);
+    }, LINE_INTERVAL_MS);
     return () => clearInterval(id);
-  }, [reducedMotion, onDone]);
+  }, [skipBoot, onDone]);
 
   return (
     <AnimatePresence>
@@ -99,24 +121,24 @@ export default function BootSequence({ reducedMotion = false, onDone }: BootSequ
               {BOOT_LINES.slice(0, line + 1).map((text, idx) => (
                 <motion.div
                   key={text}
-                  initial={{ opacity: 0, x: centerCopy ? 0 : -8, y: centerCopy ? 6 : 0 }}
-                  animate={{ opacity: idx === line ? 1 : 0.45, x: 0, y: 0 }}
+                  initial={{ opacity: 0, x: centerCopy ? 0 : -10, y: centerCopy ? 8 : 0, filter: "blur(4px)" }}
+                  animate={{
+                    opacity: idx === line ? 1 : 0.35,
+                    x: 0,
+                    y: 0,
+                    filter: "blur(0px)",
+                  }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   style={{
                     fontSize: 12,
                     color: idx === line ? "#F5A00F" : "#525F7B",
                     letterSpacing: "0.08em",
                   }}
                 >
-                  <span style={{ opacity: 0.5 }}>{">"} </span>
+                  <span style={{ opacity: 0.4 }}>{">"} </span>
                   {text}
                   {idx === line && (
-                    <motion.span
-                      animate={{ opacity: [1, 0] }}
-                      transition={{ duration: 0.5, repeat: Infinity }}
-                      style={{ marginLeft: 4 }}
-                    >
-                      ▊
-                    </motion.span>
+                    <span className="boot-cursor" style={{ marginLeft: 4 }}>▊</span>
                   )}
                 </motion.div>
               ))}

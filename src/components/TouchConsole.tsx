@@ -612,7 +612,7 @@ export default function TouchConsole({
         overflow: "hidden",
       }}
     >
-      <div className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
+      <div aria-hidden="true" className="absolute inset-0 dot-grid pointer-events-none" style={{ zIndex: 0 }} />
 
       {/* Full-bleed CRT */}
       <div

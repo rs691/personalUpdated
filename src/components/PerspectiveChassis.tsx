@@ -117,11 +117,10 @@ export default function PerspectiveChassis({
   style,
 }: PerspectiveChassisProps) {
   const shellRef = useRef<HTMLDivElement>(null);
-  // Depth cue only — hard ceiling well below anything that looks like a flip
-  const restX = 1.2;
-  const maxY = 1.5;
-  const maxXDelta = 0.9;
-  const liftZ = 6;
+  const restX = 1.6;
+  const maxY = 2.0;
+  const maxXDelta = 1.2;
+  const liftZ = 8;
 
   const rotateX = useMotionValue(reducedMotion ? 0 : restX);
   const rotateY = useMotionValue(0);
@@ -133,11 +132,11 @@ export default function PerspectiveChassis({
   };
 
   // Contact shadow slides opposite the card tilt (small travel)
-  const shadowX = useTransform(rotateY, [-maxY, maxY], [8, -8]);
+  const shadowX = useTransform(rotateY, [-maxY, maxY], [12, -12]);
   const shadowY = useTransform(
     rotateX,
     [restX - maxXDelta, restX + maxXDelta],
-    [6, 0],
+    [8, -2],
   );
 
   // Single transform string with explicit deg — no unit ambiguity / spring overshoot past caps
@@ -159,10 +158,9 @@ export default function PerspectiveChassis({
   const onLeave = () => {
     if (reducedMotion) return;
     stopAnims();
-    // Tween (not spring) so leave never overshoots past rest
     animRef.current = [
-      animate(rotateX, restX, { type: "tween", duration: 0.35, ease: "easeOut" }),
-      animate(rotateY, 0, { type: "tween", duration: 0.35, ease: "easeOut" }),
+      animate(rotateX, restX, { type: "spring", stiffness: 120, damping: 18, mass: 0.8 }),
+      animate(rotateY, 0, { type: "spring", stiffness: 120, damping: 18, mass: 0.8 }),
     ];
   };
 

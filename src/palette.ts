@@ -7,9 +7,9 @@ export const palette = {
   /** Active chrome / borders / secondary controls */
   border: "#252B3A",
   /** Captions, placeholders, secondary icons */
-  muted: "#525F7B",
+  muted: "#6B7A96",
   /** Cool readable secondary text (chrome UI, not CRT titles) */
-  slate: "#94A3B8",
+  slate: "#A0B0C4",
   /** Amber shadow / inset depth */
   amberDeep: "#925B03",
   /** Primary amber */

@@ -80,6 +80,18 @@ html, body {
   100% { transform: translateY(100vh); }
 }
 
+@keyframes noise-drift {
+  0%   { background-position: 0 0; }
+  25%  { background-position: -128px -64px; }
+  50%  { background-position: 64px -192px; }
+  75%  { background-position: -192px 96px; }
+  100% { background-position: 0 0; }
+}
+
+.noise-drift {
+  animation: noise-drift 1.2s steps(6) infinite;
+}
+
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   92% { opacity: 1; }
@@ -92,6 +104,21 @@ html, body {
 @keyframes pulse-amber {
   0%, 100% { opacity: 1; box-shadow: 0 0 6px #F5A00F; }
   50% { opacity: 0.6; box-shadow: 0 0 2px #F5A00F; }
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.boot-cursor {
+  animation: blink-cursor 0.5s step-end infinite;
+}
+
+.typewriter-cursor {
+  animation: blink-cursor 0.45s step-end infinite;
+  color: #F5A00F;
+  margin-left: 2px;
 }
 
 @keyframes trace-flow {
@@ -191,16 +218,16 @@ html, body {
 }
 
 @keyframes sheen-sweep {
-  0% { transform: translateX(-30%) rotate(8deg); opacity: 0; }
-  18% { opacity: 0.35; }
-  50% { transform: translateX(28%) rotate(8deg); opacity: 0.28; }
-  82% { opacity: 0.35; }
-  100% { transform: translateX(58%) rotate(8deg); opacity: 0; }
+  0% { transform: translateX(-35%) rotate(8deg); opacity: 0; }
+  15% { opacity: 0.3; }
+  45% { transform: translateX(20%) rotate(8deg); opacity: 0.22; }
+  70% { transform: translateX(42%) rotate(8deg); opacity: 0.32; }
+  100% { transform: translateX(65%) rotate(8deg); opacity: 0; }
 }
 
 @keyframes chassis-breathe {
   0%, 100% { box-shadow: 0 0 80px #F5A00F0a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
-  50% { box-shadow: 0 0 100px #F5A00F14, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
+  50% { box-shadow: 0 0 120px #F5A00F1a, 0 24px 80px #000000aa, inset 0 1px 0 #2A2D3844; }
 }
 
 .chassis-breathe {
@@ -213,7 +240,10 @@ html, body {
   .deck-power-on,
   .amber-glitter span,
   .crt-sheen,
-  .chassis-breathe {
+  .chassis-breathe,
+  .noise-drift,
+  .boot-cursor,
+  .typewriter-cursor {
     animation: none !important;
   }
 }

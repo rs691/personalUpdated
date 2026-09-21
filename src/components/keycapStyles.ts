@@ -1,8 +1,8 @@
 import { palette } from "@/palette";
 
 /** Shared raised keycap language — mode dial rim + tuner arrows. */
-export const KEYCAP_SIZE = 44;
-export const KEYCAP_SIZE_COMPACT = 40;
+export const KEYCAP_SIZE = 48;
+export const KEYCAP_SIZE_COMPACT = 44;
 
 export const keycapFace = {
   borderRadius: 12,

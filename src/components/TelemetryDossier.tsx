@@ -93,15 +93,7 @@ function TransmissionLine({
   return (
     <span ref={ref} style={style}>
       {reducedMotion ? text : out}
-      {showCursor && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.45, repeat: Infinity, repeatType: "reverse" }}
-          style={{ color: "#F5A00F", marginLeft: 2 }}
-        >
-          ▊
-        </motion.span>
-      )}
+      {showCursor && <span className="typewriter-cursor">▊</span>}
     </span>
   );
 }
@@ -127,22 +119,28 @@ function DossierBlock({
   children,
   reducedMotion,
   root,
+  index = 0,
 }: {
   label: string;
   children: ReactNode;
   reducedMotion: boolean;
   root: React.RefObject<HTMLElement | null>;
+  index?: number;
 }) {
   return (
     <motion.section
-      initial={reducedMotion ? false : { opacity: 0, y: 16 }}
-      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 20, filter: "blur(3px)" }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={
         reducedMotion
           ? undefined
-          : { root: root as React.RefObject<Element | null>, amount: 0.2, once: true }
+          : { root: root as React.RefObject<Element | null>, amount: 0.15, once: true }
       }
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      transition={{
+        duration: 0.45,
+        delay: reducedMotion ? 0 : index * 0.08,
+        ease: [0.16, 1, 0.3, 1],
+      }}
       style={{ marginBottom: S.xl, position: "relative", zIndex: 1 }}
     >
       <SectionLabel>{label}</SectionLabel>
@@ -152,9 +150,9 @@ function DossierBlock({
 }
 
 const screenVariants = {
-  enter: { opacity: 0, y: 14, filter: "blur(4px) brightness(2)" },
+  enter: { opacity: 0, y: 10, filter: "blur(6px) brightness(2.5)" },
   center: { opacity: 1, y: 0, filter: "blur(0px) brightness(1)" },
-  exit: { opacity: 0, y: -10, filter: "blur(3px) brightness(0.5)" },
+  exit: { opacity: 0, y: -6, filter: "blur(4px) brightness(0.3)" },
 };
 
 /** CRT dossier — sticky head + scrollable SUMMARY / IMPACT / DETAIL. */
@@ -301,7 +299,7 @@ export default function TelemetryDossier({
           style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
-            color: "#525F7B",
+            color: "#6B7A96",
             letterSpacing: "0.12em",
           }}
         >
@@ -326,8 +324,8 @@ export default function TelemetryDossier({
             width: "100%",
             originX: 0,
             scaleX: scrollYProgress,
-            background: "linear-gradient(90deg, #925B03, #F5A00F, #FCD34D)",
-            boxShadow: "0 0 8px #F5A00F88",
+            background: "linear-gradient(90deg, #925B03 0%, #F5A00F 60%, #FCD34D 100%)",
+            boxShadow: "0 0 12px #F5A00Fbb, 0 0 4px #FCD34D66",
           }}
         />
       </div>
@@ -341,8 +339,14 @@ export default function TelemetryDossier({
             animate={
               showFlicker
                 ? {
-                    opacity: [0.2, 0.9, 0.4, 1],
-                    filter: ["blur(3px)", "blur(0px)"],
+                    opacity: [0.1, 1, 0.3, 0.9, 1],
+                    filter: [
+                      "blur(4px) brightness(2.5)",
+                      "blur(0px) brightness(1.3)",
+                      "blur(2px) brightness(0.6)",
+                      "blur(0px) brightness(1.05)",
+                      "blur(0px) brightness(1)",
+                    ],
                   }
                 : reducedMotion
                   ? { opacity: 1 }
@@ -350,7 +354,7 @@ export default function TelemetryDossier({
             }
             exit={reducedMotion ? undefined : "exit"}
             transition={{
-              duration: reducedMotion ? 0 : 0.32,
+              duration: reducedMotion ? 0 : showFlicker ? 0.38 : 0.3,
               ease: [0.16, 1, 0.3, 1],
             }}
             className="absolute inset-0 flex flex-col"
@@ -398,57 +402,27 @@ export default function TelemetryDossier({
                 />
               </div>
 
-              <div style={{ position: "relative" }}>
-                <h1
-                  aria-hidden
-                  style={{
-                    fontFamily: "'Chakra Petch', sans-serif",
-                    fontSize: titleSize,
-                    fontWeight: 700,
-                    letterSpacing: "0.02em",
-                    lineHeight: 1.2,
-                    margin: 0,
-                    visibility: "hidden",
-                    overflowWrap: "anywhere",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {entry.title}
-                </h1>
-                <h1
-                  style={{
-                    fontFamily: "'Chakra Petch', sans-serif",
-                    fontSize: titleSize,
-                    fontWeight: 700,
-                    color: "#F0EAD8",
-                    letterSpacing: "0.02em",
-                    lineHeight: 1.2,
-                    textShadow: "0 0 40px #F5A00F14",
-                    margin: 0,
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    overflowWrap: "anywhere",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {reducedMotion ? entry.title : title}
-                  {!reducedMotion && (
-                    <motion.span
-                      animate={{ opacity: [1, 0] }}
-                      transition={{
-                        duration: 0.6,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                      }}
-                      style={{ color: "#F5A00F", marginLeft: 3 }}
-                    >
-                      {title.length < entry.title.length ? "▊" : ""}
-                    </motion.span>
-                  )}
-                </h1>
-              </div>
+              <h1
+                aria-label={entry.title}
+                style={{
+                  fontFamily: "'Chakra Petch', sans-serif",
+                  fontSize: titleSize,
+                  fontWeight: 700,
+                  color: "#F0EAD8",
+                  letterSpacing: "0.02em",
+                  lineHeight: 1.2,
+                  textShadow: "0 0 40px #F5A00F14",
+                  margin: 0,
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
+                  minHeight: "1.2em",
+                }}
+              >
+                {reducedMotion ? entry.title : title}
+                {!reducedMotion && title.length < entry.title.length && (
+                  <span className="typewriter-cursor" aria-hidden="true" style={{ marginLeft: 3 }}>▊</span>
+                )}
+              </h1>
             </div>
 
             {/* Scrollable dossier body */}
@@ -503,6 +477,7 @@ export default function TelemetryDossier({
                 label="SUMMARY"
                 reducedMotion={reducedMotion}
                 root={scrollRef}
+                index={0}
               >
                 <p
                   aria-label={entry.summary}
@@ -516,19 +491,7 @@ export default function TelemetryDossier({
                   }}
                 >
                   {reducedMotion ? entry.summary : summary}
-                  {summaryTyping && (
-                    <motion.span
-                      animate={{ opacity: [1, 0] }}
-                      transition={{
-                        duration: 0.45,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                      }}
-                      style={{ color: "#F5A00F", marginLeft: 2 }}
-                    >
-                      ▊
-                    </motion.span>
-                  )}
+                  {summaryTyping && <span className="typewriter-cursor">▊</span>}
                 </p>
               </DossierBlock>
 
@@ -536,6 +499,7 @@ export default function TelemetryDossier({
                 label="IMPACT"
                 reducedMotion={reducedMotion}
                 root={scrollRef}
+                index={1}
               >
                 <div
                   style={{
@@ -590,6 +554,7 @@ export default function TelemetryDossier({
                   label="DETAIL / ARCH"
                   reducedMotion={reducedMotion}
                   root={scrollRef}
+                  index={2}
                 >
                   <div
                     style={{
@@ -654,7 +619,7 @@ export default function TelemetryDossier({
                     borderTop: "1px solid #252B3A55",
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 10,
-                    color: "#525F7B",
+                    color: "#6B7A96",
                     letterSpacing: "0.16em",
                     textAlign: "center",
                   }}
